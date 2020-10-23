@@ -15,4 +15,5 @@
 /.fastai
 /data
 /fastbook
+/runs
 resnet34-5cycles-lr005
