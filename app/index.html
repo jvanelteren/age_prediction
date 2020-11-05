@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+      
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src='client.js' defer></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1302238-3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+  
+        gtag('config', 'UA-1302238-3');
+    </script>
+    
+
+    <a name="" id="submit_start" class="btn btn-primary" href="#" role="button">submit_start</a>
+
+
+    <div class="form-group">
+      <label for=""></label>
+    </div>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Image</th>
+            <th scope="col">Your<br>estimate</th>
+            <th scope="col">Computer<br>estimate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td id="face_0" >face_0</td>
+            <td>
+              <input type="text" class="form-control" name="" id="age_pred_human_0" placeholder="Enter age">
+            </td>
+            <td id="age_pred_comp_0" >comp0</td>
+            <td id="age_pred_actual_0" >actual0</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td id="face_1" >face_0</td>
+            <td>
+              <input type="text" class="form-control" name="" id="age_pred_human_1" placeholder="Enter age">
+            </td>
+            <td id="age_pred_comp_1" >comp0</td>
+            <td id="age_pred_actual_1" >actual0</td>
+          </tr>          
+          <tr>
+            <th scope="row">3</th>
+            <td id="face_2" >face_0</td>
+            <td>
+              <input type="text" class="form-control" name="" id="age_pred_human_2" placeholder="Enter age">
+            </td>
+            <td id="age_pred_comp_2" >comp0</td>
+            <td id="age_pred_actual_2" >actual0</td>
+          </tr>
+
+
+
+
+        </tbody>
+      </table>
+      <button id='submit_preds' type="button" class="btn btn-primary">submit_preds</button>
+      <figure class="figure" id='custom_img'>
+        <img src="" class="figure-img img-fluid rounded" alt="">
+        <figcaption class="figure-caption text-xs-right"></figcaption>
+      </figure>
+      <button id='select_image' type="button" class="btn btn-primary">select_image</button>
+      <button id='submit_image' type="button" class="btn btn-primary">submit_image</button>
+      <div id='img_predicted_age'>img_predicted_age</div>
+      <div id='output'>output</div>
+
+
+</body>
+</html>
