@@ -20,7 +20,8 @@ function submit_start() {
             // el('demo').innerHTML = `Result = ${response['result']}`;
             for (var i = 0; i < faces.length; i++) {
                 // textToWrite = faces[i].value;
-                faces[i].innerHTML = response['faces'][i];
+                let img = '<img src="' + response['faceids'][i] + '" class="rounded-circle" alt="">';
+                faces[i].innerHTML = img;
             }
             for (var i = 0; i < comp.length; i++) {
                 // comp[i].style.display='none'

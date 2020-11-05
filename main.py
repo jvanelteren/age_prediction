@@ -42,32 +42,28 @@ f = open("predictions.pickle","rb")
 df = pickle.load(f)
 logger.debug(len(df))
 
-def chunks(lst, n):
-    """Yield successive n-sized chunks from lst."""
-    for i in range(0, len(lst), n):
-        res = lst[i:i + n]
-        if len(res)==n:
-            yield res
-
-def gen_img_batch(n):
+def gen_img_ids():
     img_ids = list(range(len(df)))
     random.shuffle(img_ids)
-    yield from cycle(chunks(img_ids,n))
+    return cycle(img_ids)
 
-img_batch_generator  = gen_img_batch(n=3)
-ids = next(img_batch_generator)
-print(ids)
-df.iloc[ids]
-#%%"/get_images/") #use post since server receives
+def next_batch(gen,n):
+    return [next(gen) for _ in range(n)]
+
+img_ids_gen = gen_img_ids()
+
+
+@app.get("/get_images/") 
 async def return_images():
     logger.debug('get images') # this is the way to use the pydantic base model
+    n=10
 
-    ids = next(img_batch_generator)
+    batch_info_df = df.loc[next_batch(img_ids_gen,4)]
 
-    faces = list(range(10))
-    faceids = list(range(20,30))
-    computer = list(range(30,40))
-    actual = list(range(50,60))
+    faces = list(range(10)) # this was a placeholder for images, but can be approached locally
+    faceids = list(batch_info_df['path'])
+    computer = list(batch_info_df['pred'])
+    actual = list(batch_info_df['actual'])
     return {'faces': faces, 
             'faceids': faceids,
             'computer': computer,
