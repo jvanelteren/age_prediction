@@ -1,6 +1,11 @@
 "use strict";
 
 let el = x => document.getElementById(x);
+var style = getComputedStyle(document.body);
+var faces = document.getElementsByClassName('age_human');
+var comp = document.getElementsByClassName('age_pred_comp');
+var actual = document.getElementsByClassName('age_pred_actual');
+var rows = document.getElementsByClassName('rows');
 
 function submit_start() {
     //  gets faces from server
@@ -11,28 +16,26 @@ function submit_start() {
     
     xhr.onload = function (e) {
         if (this.readyState === 4) {
-            var style = getComputedStyle(document.body);
             let response = JSON.parse(e.target.responseText);
             // el('demo').innerHTML = `Result = ${response['result']}`;
-            var faces = document.getElementsByClassName('face');
             for (var i = 0; i < faces.length; i++) {
                 // textToWrite = faces[i].value;
                 faces[i].innerHTML = response['faces'][i];
             }
-            var comp = document.getElementsByClassName('age_pred_comp');
             for (var i = 0; i < comp.length; i++) {
-                // textToWrite = faces[i].value;
-                comp[i].style.display='none'
+                // comp[i].style.display='none'
                 comp[i].innerHTML = response['computer'][i];
             }
-            var actual = document.getElementsByClassName('age_pred_actual');
             for (var i = 0; i < actual.length; i++) {
-                // textToWrite = faces[i].value;
-                actual[i].style.display='none'
+                // actual[i].style.display='none'
                 actual[i].innerHTML = response['actual'][i];
-                actual[i].style.display='block' // to make visible
-                actual[i].style.backgroundColor = style.getPropertyValue('--success');
             }
+            for (var i = 0; i < rows.length; i++) {
+                // actual[i].style.display='none'
+                rows[i].style.backgroundColor = style.getPropertyValue('--bg-light');
+            }
+
+
             // todo save ids to global variable to send back later to server
             window.value=response['faceids'];
     };
@@ -62,12 +65,8 @@ function submit_start() {
 }
 
 function submit_preds() {
-    let age_pred = document.getElementById('age_pred_human_0').innerHTML;
     
 
-    document.getElementById('age_pred_human_0').innerHTML = 'human';
-    document.getElementById('age_pred_comp_0').innerHTML = 'computer';
-    document.getElementById('age_pred_actual_0').innerHTML = 'actual';
     
     let xhr = new XMLHttpRequest();
     let url = 'http://127.0.0.1:8000/submit_preds/';
@@ -88,16 +87,43 @@ function submit_preds() {
 
 
 
-    var faces = document.getElementsByClassName('age_human');
+
+    
     var arr = []
     // to loop you have to do it in this way
     for (var i = 0; i < faces.length; i++) {
         arr.push(faces[i].value)
+        comp[i].style.display='table-cell' // to make visible
+        actual[i].style.display='table-cell' // to make visible
+
+        var delta_human = Math.abs(faces[i].value - actual[i].innerHTML);
+        var delta_computer = Math.abs(comp[i].innerHTML - actual[i].innerHTML);
+        console.log(delta_computer);
+        console.log(delta_human);
+
+
+        var delta = (comp[i].value - actual[i].value)
+        if (delta_human < delta_computer) {
+            //  block of code to be executed if condition1 is true
+            rows[i].style.backgroundColor = style.getPropertyValue('--success');
+        } else if (delta_human > delta_computer) {
+            rows[i].style.backgroundColor = style.getPropertyValue('--danger');
+            //  block of code to be executed if the condition1 is false and condition2 is true
+        } else {
+            rows[i].style.backgroundColor = style.getPropertyValue('--info');
+            //  block of code to be executed if the condition1 is false and condition2 is false
+          }
+
+        // actual[i].style.backgroundColor = style.getPropertyValue('--success');
+        // comp[i].style.backgroundColor = style.getPropertyValue('--danger');
+        // faces[i].style.backgroundColor = style.getPropertyValue('--danger');
     }
 
     var obj = {'age':arr, 'faceids':window.value}
     console.log(obj)
     xhr.send(JSON.stringify(obj)) // with optional [body]
+
+
 }
 
 function select_image() {
