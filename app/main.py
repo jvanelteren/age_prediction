@@ -30,14 +30,14 @@ def next_batch(gen,n):
 
 
 # opening pickle file
-f = open("predictions.pickle","rb")
+f = open("app/models/predictions.pickle","rb")
 df = pickle.load(f)
 
 logger.debug(f'number of items in dataset {len(df)}')
 img_batch_gen = gen_img_ids()
 
-import database as db
-conn = db.open_db('predictions.db')
+import app.database as db
+conn = db.open_db('app/predictions.db')
 db.print_db(conn)
 logger.debug(f'{db.count_predictions(conn)} items in database')
 
@@ -49,7 +49,7 @@ async def return_images():
     batch_info_df = df.loc[next_batch(img_batch_gen,4)]
 
     faces = list(range(10)) # this was a placeholder for images, but can be approached locally
-    faceids = list(batch_info_df['path'])
+    faceids = ['../'/f for f in batch_info_df['path']]
     computer = list(batch_info_df['pred'])
     actual = list(batch_info_df['actual'])
     return {'faces': faces, 
