@@ -4,7 +4,7 @@ from typing import Optional, List
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import logging
-import pickle5
+import pickle
 import random
 from itertools import cycle
 from fastapi.middleware.cors import CORSMiddleware # this is absolutely essential to get rid of these *** cors errors
@@ -53,8 +53,8 @@ def next_batch(gen,n):
 
 
 # opening pickle file
-f = open("app/models/predictions.pickle","rb")
-df = pickle5.load(f)
+f = open("app/models/windows_predictions.pickle","rb")
+df = pickle.load(f)
 
 logger.debug(f'number of items in dataset {len(df)}')
 img_batch_gen = gen_img_ids()
@@ -82,7 +82,7 @@ async def return_images():
     batch_info_df = df.loc[next_batch(img_batch_gen,4)]
 
     faces = list(range(10)) # this was a placeholder for images, but can be approached locally
-    faceids = ['../../'+f for f in batch_info_df['path']]
+    faceids = ['../../'+str(f) for f in batch_info_df['path']]
     computer = list(batch_info_df['pred'])
     actual = list(batch_info_df['actual'])
     print(time.time()-t0)

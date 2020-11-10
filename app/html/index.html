@@ -1,90 +1,133 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Title</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  </head>
-  <body>
-      
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src='client.js' defer></script>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1302238-3"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-  
-        gtag('config', 'UA-1302238-3');
-    </script>
-    
+<head>
+  <title>Title</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <a name="" id="submit_start" class="btn btn-primary" href="#" role="button">submit_start</a>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src='client.js' defer></script>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/bootstrap.min.js"></script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1302238-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-1302238-3');
+  </script>
+
+  <section class="jumbotron text-center">
+    <div class="container">
+      <h1 class="jumbotron-heading">Face2Age</h1>
+      <p class="lead text-muted">How well can you estimate someone age from a photo? Participate to find out if humans can still outperform computers. Plus: upload your own photo and see how young/old the computer thinks you are</p>
+      <p>
+        <button class="btn btn-primary" id="submit_start" type="button" data-toggle="collapse"
+          data-target="#participate" aria-expanded="true" aria-controls="participate">
+          Participate in experiment
+        </button>
+        <!-- set aria expanded to false to initialize hidden -->
+        <button class="btn btn-primary" id="submit_start" type="button" data-toggle="collapse"
+          data-target="#upload" aria-expanded="true" aria-controls="upload">
+          Upload your own
+        </button>
+      </p>
+    </div>
+  </section>
+
+
+
+
+
+
+  <div class="collapse show" id="participate">
+    <p class="h4">
+      Blablka uipload anonymous etc
+    </p>
 
 
     <div class="form-group">
       <label for=""></label>
     </div>
     <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Image</th>
-            <th scope="col">Your<br>estimate</th>
-            <th scope="col">Computer<br>estimate</th>
-            <th scope="col">Actual<br>estimate</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class='rows'>
-            <th scope="row">1</th>
-            <td class="face" ><img src="data/face_age/016/23.png" class="rounded-circle" alt=""></td>
-            <td><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
-            <td class="age_pred_comp" >comp0</td>
-            <td class="age_pred_actual" >actual0</td>
-          </tr>
-          <tr class='rows'>
-            <th scope="row">2</th>
-            <td class="face" >face_0</td>
-            <td><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
-            <td class="age_pred_comp" >comp0</td>
-            <td class="age_pred_actual" >actual0</td>
-          </tr>
-          <tr class='rows'>
-            <th scope="row">3</th>
-            <td class="face" >face_0</td>
-            <td><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
-            <td class="age_pred_comp" >comp0</td>
-            <td class="age_pred_actual" >actual0</td>
-          </tr>
-  
-          
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Image</th>
+          <th scope="col">Your<br>estimate</th>
+          <th scope="col">Computer<br>estimate</th>
+          <th scope="col">Actual<br>estimate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class='rows'>
+          <th scope="row">1</th>
+          <td class="face"><img src="data/face_age/016/23.png" class="rounded-circle" alt=""></td>
+          <td><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
+          <td class="age_pred_comp">comp0</td>
+          <td class="age_pred_actual">actual0</td>
+        </tr>
+        <tr class='rows'>
+          <th scope="row">2</th>
+          <td class="face">face_0</td>
+          <td><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
+          <td class="age_pred_comp">comp0</td>
+          <td class="age_pred_actual">actual0</td>
+        </tr>
+        <tr class='rows'>
+          <th scope="row">3</th>
+          <td class="face">face_0</td>
+          <td><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
+          <td class="age_pred_comp">comp0</td>
+          <td class="age_pred_actual">actual0</td>
+        </tr>
 
-        </tbody>
-      </table>
-      <button id='submit_preds' type="button" class="btn btn-primary">submit_preds</button>
-      <figure class="figure" id='custom_img'>
-        <img src="" class="figure-img img-fluid rounded" alt="">
-        <figcaption class="figure-caption text-xs-right"></figcaption>
-      </figure>
-      <div id='img_predicted_age'>img_predicted_age</div>
-      <div id='output'>output</div>
-      <div class="form-group">
-        <label for=""></label>
-        <input type="file" class="form-control-file" name="" id="upload" placeholder="" aria-describedby="fileHelpId">
-        <small id="fileHelpId" class="form-text text-muted">Help text</small>
-      </div>
-      <button id='submit_image' type="button" class="btn btn-primary">submit_image</button>
 
+
+      </tbody>
+    </table>
+    <button id='submit_preds' type="button" class="btn btn-primary">Submit your prediction</button>
+
+  </div>
+  <div class="collapse show" id="upload">
+    <p class="h4">
+      Blablka uipload anonymous etc
+    </p>
+    <div class="form-group">
+      <label for=""></label>
+      <input type="file" class="form-control-file" name="" id="upload" placeholder="" aria-describedby="fileHelpId">
+      <small id="fileHelpId" class="form-text text-muted"></small>
+    </div>
+    <button id='submit_image' type="button" class="btn btn-primary">Check the age of your image</button>
+    <div id='img_predicted_age'>img_predicted_age</div>
+
+  </div>
 
 </body>
+
 </html>
