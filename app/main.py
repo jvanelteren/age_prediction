@@ -26,6 +26,7 @@ if os.getcwd()=='/ds/app':
 class Ages(BaseModel):
     age: List[str] = []
     faceids: List[str] = []
+    actual: List[str] = []
 
 app = FastAPI()
 
@@ -53,7 +54,12 @@ def next_batch(gen,n):
 
 
 # opening pickle file
-f = open("app/models/windows_predictions.pickle","rb")
+import os
+
+if os.name == 'nt':
+    f = open("app/models/windows_predictions.pickle","rb")
+else:
+    f = open("app/models/predictions.pickle","rb")
 df = pickle.load(f)
 
 logger.debug(f'number of items in dataset {len(df)}')
@@ -100,34 +106,77 @@ async def submit_preds(ages:Ages,request: Request):
     logger.debug(request.client.host) # this is the way to use the pydantic base model
     logger.debug(ages)
     print(ages)
+    print('this is the host', request.headers['X-Real-IP'])
     # save ages to database
     if ages.age and ages.faceids:
         for i in range(len(ages.age)):
-            db.create_pred(conn, [request.client.host,ages.faceids[i],ages.age[i]])
-            print('added')
+            db.create_pred(conn, [request.headers['X-Real-IP'],ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
+            print('added',[request.headers['X-Real-IP'].host,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
     # db.print_db(conn)
 
 
     return {'msg': 'ok'}
 
+import torchvision
+from torchvision import transforms
+import torch
+from torch import nn
+class AgeResnet(nn.Module):
+    def __init__(self, size='18', feat_extract=False):
+        super().__init__()
+        resnet = 'torchvision.models.resnet'+size+'(pretrained=True)'
+        resnet = eval(resnet)
+        modules=list(resnet.children())[:-1]
+        self.resnet =nn.Sequential(*modules)
 
+        if feat_extract:
+            # with feature extraction we only train the linear layer and keep the resnet parameters fixed 
+            for m in self.modules():
+                m.requires_grad_(False)
 
+        self.fc = nn.Linear(in_features=512, out_features=1, bias=True)
+        nn.init.kaiming_normal_(self.fc.weight)
+
+    def forward(self,x):
+        out = self.resnet(x)
+        x = torch.flatten(out, 1)
+        return self.fc(x)
+        
+def img_to_reshaped_normalized_tensor(img):
+        # makes a tensor, scales range to 0-1 and normalizes to same as imagenet
+        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                    std=[0.229, 0.224, 0.225])
+        resize = transforms.Resize((200,200), interpolation=2)
+        print('1',img.shape)
+        img = resize(img/255)
+        print('2',img.shape)
+        img = normalize(img)
+        print('3',img.shape)
+        return img
+model = AgeResnet()
+model.load_state_dict(torch.load('app/models/model4.3',map_location=torch.device('cpu')))
+model.eval()
 
 @app.post("/backend/upload/")
 async def create_file(file: bytes = File(...)):
     print('jo')
     # 
     try:
-        pil_image = np.array(Image.open(BytesIO(file)))
-
+        pil_image = transforms.functional.pil_to_tensor((Image.open(BytesIO(file))))
     except:
-        return {"file_size": '2'}
+        return {"status": 'failed processing image'}
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Unable to process file"
         )
     print(np.array(pil_image).shape)
+    img_t = img_to_reshaped_normalized_tensor(pil_image)
 
-    return {"file_size": '4'}
+    pred = model(img_t[None])
+    
+    # todo resizing, normalizing and running it through a model and returning the prediction
+
+
+    return {"status": str(pred.item())}
 
 @app.post("/backend/test/")
 async def create_file():
@@ -141,4 +190,9 @@ async def create_file():
 
 # %%
 # 
+# %%
+
+# %%
+
+# %%
 # %%

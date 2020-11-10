@@ -7,25 +7,21 @@ var comp = document.getElementsByClassName('age_pred_comp');
 var actual = document.getElementsByClassName('age_pred_actual');
 var rows = document.getElementsByClassName('rows');
 
+let baseurl
+if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+    // alert('local')
+    baseurl = 'http://127.0.0.1:5000';
+}
+else {
+    // alert('nonlocal')
+    baseurl = '';
+}
+
+
 function submit_start() {
     //  gets faces from server
     let xhr = new XMLHttpRequest();
-    xhr.timeout = 10000;
-    // let url = ('GET', `${loc.protocol}//${loc.hostname}:${loc.port}/get_images`)
-    // let url = 'http://34.121.58.11/app/get_images/';
-    // let url = '/backend/get_images/';
-    let url
-    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-        url = 'http://127.0.0.1:5000/backend/get_images/';
-        alert('local')
-    }
-    else {
-        alert('nonlocal')
-
-        url = '/backend/get_images/';
-    }
-
-
+    let url = baseurl + '/backend/get_images/'
 
     console.time('Execution Time');
     xhr.onload = function (e) {
@@ -56,7 +52,6 @@ function submit_start() {
                 rows[i].style.backgroundColor = style.getPropertyValue('--bg-light');
             }
 
-
             // todo save ids to global variable to send back later to server
             window.value = response['faceids'];
         };
@@ -67,19 +62,12 @@ function submit_start() {
     };
     // vscode make sure to debug with CORS enabled in launch.json "runtimeArgs": ["--disable-web-security"]
     xhr.open('GET', url, true);
-    // build js object and later json stringify that
 
     // 2ways to select multiple elements
     // var textBoxes = document.querySelectorAll('[id^=textbox]');
     // var elements = document.getElementsByClassName('yourClassNameHere');
 
     var faces = document.getElementsByClassName('face');
-
-    // for(var i in faces){
-    //     // textToWrite = faces[i].value;
-    //     faces[i].innerHTML = 'bla';
-    // }
-
 
     xhr.timeout = 10000;
 
@@ -90,14 +78,15 @@ function submit_start() {
 
 function submit_preds() {
 
-
     let xhr = new XMLHttpRequest();
-    let url = '/backend/submit_preds/';
+    let url = baseurl + '/backend/submit_preds/'
 
     xhr.onload = function (e) {
         if (this.readyState === 4) {
-
-            // let response = JSON.parse(e.target.responseText);
+            let response = JSON.parse(e.target.responseText);
+            el('result_preds').innerHTML = ('Your mean average error: '+ Math.round((total_delta_human/faces.length * 10))/10
+            +'\n\n Computer mean average error:' + Math.round((total_delta_computer/faces.length * 10))/10);
+            
             //     // el('demo').innerHTML = `Result = ${response['result']}`;
         }
     };
@@ -122,16 +111,24 @@ function submit_preds() {
         arr.push(faces[i].value)
 
     }
+    var arr_actual = []
+    for (var i = 0; i < faces.length; i++) {
+        arr_actual.push(comp[i].innerHTML);
 
+    }
 
+    var total_delta_human = 0
+    var total_delta_computer = 0
     for (var i = 0; i < faces.length; i++) {
         comp[i].style.display = 'table-cell' // to make visible
         actual[i].style.display = 'table-cell' // to make visible
 
         var delta_human = Math.abs(faces[i].value - actual[i].innerHTML);
         var delta_computer = Math.abs(comp[i].innerHTML - actual[i].innerHTML);
+        total_delta_human += delta_human
+        total_delta_computer += delta_computer
         console.log(delta_computer);
-        console.log(delta_human);
+        console.log(faces[i].value - actual[i].innerHTML + faces[i].value);
         var delta = (comp[i].value - actual[i].value)
         if (delta_human < delta_computer) {
             //  block of code to be executed if condition1 is true
@@ -149,9 +146,9 @@ function submit_preds() {
         // faces[i].style.backgroundColor = style.getPropertyValue('--danger');
     }
 
-    var obj = { 'age': arr, 'faceids': window.value }
-    console.log(obj)
-    xhr.send(JSON.stringify(obj)) // with optional [body]
+    var obj = { 'age': arr, 'faceids': window.value, 'actual':arr_actual };
+    console.log(obj);
+    xhr.send(JSON.stringify(obj)); // with optional [body]
 
 
 }
@@ -162,8 +159,8 @@ function submit_image() {
     var input = document.querySelector('input[type=file]'),
         file = input.files[0];
     let xhr = new XMLHttpRequest();
-
-    xhr.open("POST", "/backend/upload/", true);
+    let url = baseurl + '/backend/upload/'
+    xhr.open("POST", url, true);
 
 
     //if the file isn't a image nothing happens.
@@ -181,13 +178,12 @@ function submit_image() {
 
     xhr.onload = function (e) {
         //The response of de upload
-        alert(xhr.responseText);
+        alert('Your estimated age is '+xhr.responseText+' Enjoy your wisdom or youthfullness!');
         xhr.responseText;
 
     }
 
     xhr.send(fd)
-    alert(document.getElementById('upload').value)
 }
 
 document.getElementById('submit_image').addEventListener("click", submit_image)

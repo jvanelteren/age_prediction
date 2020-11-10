@@ -18,8 +18,9 @@ def create_table(conn, create_table_sql):
         print(e)
 
 def create_pred(conn, prediction):
-    sql = """ INSERT INTO predictions(date, ip, image_path, prediction)
-              VALUES(DATE('now'),?,?,?) """
+    print(prediction)
+    sql = """ INSERT INTO predictions(date, ip, image_path, prediction, actual, abs_error)
+              VALUES(DATE('now'),?,?,?,?,?) """
     cur = conn.cursor()
     cur.execute(sql,prediction)
     conn.commit()
@@ -55,7 +56,9 @@ def open_db(name):
                                         date text NOT NULL,
                                         ip text NOT NULL,
                                         image_path text NOT NULL,
-                                        prediction integer NOT NULL)
+                                        prediction integer NOT NULL,
+                                        actual integer NOT NULL,
+                                        abs_error integer NOT NULL)
                                     """
 
     conn = create_con(name)
