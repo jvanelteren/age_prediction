@@ -77,10 +77,11 @@ def img_to_reshaped_normalized_tensor(img):
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                     std=[0.229, 0.224, 0.225])
         resize = transforms.Resize((200,200), interpolation=2)
-        print('1',img.shape)
-        img = resize(img/255)
-        print('2',img.shape)
-        img = normalize(img)
+        # print('1',img.shape)
+        img = resize(img)
+        img = transforms.functional.pil_to_tensor(img)
+        # print('2',img.shape)
+        img = normalize(img.float()/255)
         print('3',img.shape)
         return img
 model = AgeResnet()
@@ -179,17 +180,20 @@ async def create_file(file: bytes = File(...)):
     print('jo')
     # 
     try:
-        pil_image = transforms.functional.pil_to_tensor((Image.open(BytesIO(file))))
+        # transforms.functional.pil_to_tensor
+        pil_image = ((Image.open(BytesIO(file))))
     except:
         return {"status": 'failed processing image'}
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Unable to process file"
         )
-    print(np.array(pil_image).shape)
+    # print(np.array(pil_image).shape)
     img_t = img_to_reshaped_normalized_tensor(pil_image)
 
     pred = model(img_t[None])
-    
+    from pathlib import Path
+    path = Path('app/uploads/')
+    pil_image.save(path/(str(time.time())+'.png'),"PNG")
     # todo resizing, normalizing and running it through a model and returning the prediction
 
 
