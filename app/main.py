@@ -169,10 +169,10 @@ async def submit_preds(ages:Ages,request: Request):
     items_db, mae_human = running_mae(mae_batch, mae_human, items_db, num_items=batch_size)
     print(items_db, mae_human, mae_comp)
     logger.debug(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")
-
-    return {'items_db': items_db, 
-            'mae_human' : mae_human, 
-            'mae_comp' : mae_comp}
+    return {'msg':'success'}
+    return {'items_db': str(items_db), 
+            'mae_human' : str(mae_human), 
+            'mae_comp' : str(mae_comp)}
 
 
 @app.post("/backend/upload/")

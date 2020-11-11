@@ -82,6 +82,9 @@ function submit_preds() {
     let url = baseurl + '/backend/submit_preds/'
 
     xhr.onload = function (e) {
+        e.preventDefault();
+        alert('break');
+        return;
         if (this.readyState === 4) {
             let response = JSON.parse(e.target.responseText);
             el('result_preds').innerHTML = ('Your mean average error: '+ Math.round((total_delta_human/faces.length * 10))/10
@@ -134,8 +137,6 @@ function submit_preds() {
         var delta_computer = Math.abs(comp[i].innerHTML - actual[i].innerHTML);
         total_delta_human += delta_human
         total_delta_computer += delta_computer
-        console.log(delta_computer);
-        console.log(faces[i].value - actual[i].innerHTML + faces[i].value);
         var delta = (comp[i].value - actual[i].value)
         if (delta_human < delta_computer) {
             //  block of code to be executed if condition1 is true
@@ -155,6 +156,7 @@ function submit_preds() {
 
     var obj = { 'age': arr, 'faceids': window.value, 'actual':arr_actual };
     console.log(obj);
+
     xhr.send(JSON.stringify(obj)); // with optional [body]
 
 
