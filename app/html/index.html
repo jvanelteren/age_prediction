@@ -66,8 +66,8 @@
 
 
   <div class="collapse show" id="participate">
-    <p class="h4">
-      Blablka uipload anonymous etc
+    <p>
+      Predict 10 ages from faces and see how well you did
     </p>
 
 
@@ -111,20 +111,21 @@
 
       </tbody>
     </table>
-    <button id='submit_preds' type="button" class="btn btn-primary">Submit your prediction</button>
+    <button id='submit_preds' type="button" class="btn btn-primary">Submit my predictions</button>
     <h4 id='result_preds'></h4>
 
   </div>
   <div class="collapse show" id="upload">
-    <p class="h4">
-      Blablka uipload anonymous etc
+    <p>
+      Choose an picture where someone's face is more or less centered in the picture. The model will always try to give a prediction
+      ,even is there is no face in the picture. 
     </p>
     <div class="form-group">
       <label for=""></label>
       <input type="file" class="form-control-file" name="" id="upload" placeholder="" aria-describedby="fileHelpId">
       <small id="fileHelpId" class="form-text text-muted"></small>
     </div>
-    <button id='submit_image' type="button" class="btn btn-primary">Check the age of your image</button>
+    <button id='submit_image' type="button" class="btn btn-primary">Predict the age of this face</button>
     <div id='img_predicted_age'>img_predicted_age</div>
 
   </div>

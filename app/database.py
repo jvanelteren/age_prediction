@@ -1,3 +1,4 @@
+#%%
 import sqlite3
 from sqlite3 import Error
 
@@ -35,11 +36,12 @@ def do_sql(conn,sql):
 
 def count_predictions(conn):
     cur = conn.cursor()
-    print(cur.execute("SELECT COUNT (*) FROM predictions;").fetchall()[0])
+    return cur.execute("SELECT COUNT (*) FROM predictions;").fetchall()[0][0]
 
 def count_distinct_predictions(conn):
     cur = conn.cursor()
-    print(cur.execute("SELECT COUNT(*) FROM (SELECT DISTINCT * FROM predictions);").fetchall()[0])
+    return cur.execute("SELECT COUNT(*) FROM (SELECT DISTINCT * FROM predictions);").fetchall()[0][0]
+
 
 def del_all_records(conn):
     cur = conn.cursor()
@@ -76,3 +78,18 @@ def open_db(name):
 def print_db(conn):
     for i in conn.cursor().execute("SELECT * FROM predictions"):
         print(i)
+
+def human_mae(conn):
+    cur = conn.cursor()
+    return cur.execute("SELECT AVG(abs_error) FROM predictions").fetchall()[0][0]
+
+
+#%%
+# conn = open_db('predictions.db')
+# c = count_predictions(conn)
+# print_db(conn)
+
+# # # %%
+# h = human_mae(conn)
+# h
+# %%

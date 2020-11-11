@@ -85,9 +85,16 @@ function submit_preds() {
         if (this.readyState === 4) {
             let response = JSON.parse(e.target.responseText);
             el('result_preds').innerHTML = ('Your mean average error: '+ Math.round((total_delta_human/faces.length * 10))/10
-            +'\n\n Computer mean average error:' + Math.round((total_delta_computer/faces.length * 10))/10);
+            +' Computer mean average error:' + Math.round((total_delta_computer/faces.length * 10))/10);
+            // Stats from backend: len(database), overall human performance, overall computer performance
+            // Your MAE xxx. Computer MAE xxx
+            // There are now xx human predictions in the database
+            // Overall humans xxx MAE, computer xxx MAE
             
-            //     // el('demo').innerHTML = `Result = ${response['result']}`;
+            // You’ve beaten the computer on this batch!
+            // You’ve scored better than other humans. Your images could have been easier, or you are just good at this!
+            // The computer found these images easier (MAE xxx vs xxx)
+            
         }
     };
 
@@ -149,6 +156,7 @@ function submit_preds() {
     var obj = { 'age': arr, 'faceids': window.value, 'actual':arr_actual };
     console.log(obj);
     xhr.send(JSON.stringify(obj)); // with optional [body]
+
 
 
 }

@@ -12,6 +12,9 @@ from fastapi import FastAPI, File, UploadFile, HTTPException, status
 import numpy as np
 from PIL import Image
 from io import BytesIO
+import time
+from datetime import datetime
+import torchvision
 # you can specify allowed origins, or just allow everything with ["*"]
 origins = [
     "http://34.121.58.11/",
@@ -24,9 +27,9 @@ import os
 if os.getcwd()=='/ds/app':
     os.chdir('/ds')
 class Ages(BaseModel):
-    age: List[str] = []
+    age: List[int] = []
     faceids: List[str] = []
-    actual: List[str] = []
+    actual: List[int] = []
 
 app = FastAPI()
 
@@ -38,89 +41,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-logger = logging.getLogger("uvicorn")
 logger = logging.getLogger("gunicorn")
+logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG) # the log level needs to be set here and not in uvicorn!
 
-
-#%%
-def gen_img_ids():
-    img_ids = list(range(len(df)))
-    random.shuffle(img_ids)
-    return cycle(img_ids)
-
-def next_batch(gen,n):
-    return [next(gen) for _ in range(n)]
-
-
-# opening pickle file
 import os
-
-if os.name == 'nt':
-    f = open("app/models/windows_predictions.pickle","rb")
-else:
-    f = open("app/models/predictions.pickle","rb")
-df = pickle.load(f)
-
-logger.debug(f'number of items in dataset {len(df)}')
-img_batch_gen = gen_img_ids()
-
 import app.database as db
-conn = db.open_db('app/predictions.db')
-# db.print_db(conn)
-print('started')
-logger.debug(f'{db.count_predictions(conn)} items in database')
-import time
-from datetime import datetime
-
-
-
-@app.get("/backend/get_images/") 
-async def return_images():
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
-    print("Current Time =", current_time)
-
-    t0 = time.time()
-    # logger.debug('get images') # this is the way to use the pydantic base model
-    # n=10
-
-    batch_info_df = df.loc[next_batch(img_batch_gen,4)]
-
-    faces = list(range(10)) # this was a placeholder for images, but can be approached locally
-    faceids = ['../../'+str(f) for f in batch_info_df['path']]
-    computer = list(batch_info_df['pred'])
-    actual = list(batch_info_df['actual'])
-    print(time.time()-t0)
-    # print(faces, faceids, computer, actual)
-    # return {'hi':'33'}
-    return {'faces': faces, 
-            'faceids': faceids,
-            'computer': computer,
-            'actual': actual
-            }
-
-@app.post("/backend/submit_preds/") #use post since server receives
-async def submit_preds(ages:Ages,request: Request):
-    logger.debug('submit preds') # this is the way to use the pydantic base model
-    logger.debug(request.client.host) # this is the way to use the pydantic base model
-    logger.debug(ages)
-    print(ages)
-    print('this is the host', request.headers['X-Real-IP'])
-    # save ages to database
-    if ages.age and ages.faceids:
-        for i in range(len(ages.age)):
-            db.create_pred(conn, [request.headers['X-Real-IP'],ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
-            print('added',[request.headers['X-Real-IP'].host,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
-    # db.print_db(conn)
-
-
-    return {'msg': 'ok'}
-
-import torchvision
 from torchvision import transforms
 import torch
 from torch import nn
+
 class AgeResnet(nn.Module):
     def __init__(self, size='18', feat_extract=False):
         super().__init__()
@@ -157,6 +87,93 @@ model = AgeResnet()
 model.load_state_dict(torch.load('app/models/model4.3',map_location=torch.device('cpu')))
 model.eval()
 
+def gen_img_ids():
+    img_ids = list(range(len(df)))
+    random.shuffle(img_ids)
+    return cycle(img_ids)
+
+def next_batch(gen,n):
+    return [next(gen) for _ in range(n)]
+
+if os.name == 'nt':
+    f = open("app/models/windows_predictions.pickle","rb")
+else:
+    f = open("app/models/predictions.pickle","rb")
+df = pickle.load(f)
+logger.debug(f'number of items in dataset {len(df)}')
+img_batch_gen = gen_img_ids()
+
+conn = db.open_db('app/predictions.db')
+print('started')
+
+items_db = db.count_predictions(conn)
+mae_human = db.human_mae(conn)
+mae_comp = round(df['loss'].mean(),1)
+logger.debug(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")
+
+
+def running_mae(mae_batch, mae_db_before, items_db_before, num_items=10):
+    items_db_after = items_db_before + num_items
+    mae_after = (mae_batch * num_items + mae_db_before * items_db_before)/items_db_after
+    return (items_db_after, mae_after)
+
+ 
+
+
+@app.get("/backend/get_images/") 
+async def return_images():
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print("Current Time =", current_time)
+
+    t0 = time.time()
+    # logger.debug('get images') # this is the way to use the pydantic base model
+    # n=10
+
+    batch_info_df = df.loc[next_batch(img_batch_gen,4)]
+
+    faces = list(range(10)) # this was a placeholder for images, but can be approached locally
+    faceids = ['../../'+str(f) for f in batch_info_df['path']]
+    computer = list(batch_info_df['pred'])
+    actual = list(batch_info_df['actual'])
+    print(time.time()-t0)
+    # print(faces, faceids, computer, actual)
+    # return {'hi':'33'}
+    return {'faces': faces, 
+            'faceids': faceids,
+            'computer': computer,
+            'actual': actual
+            }
+
+@app.post("/backend/submit_preds/") #use post since server receives
+async def submit_preds(ages:Ages,request: Request):
+    logger.debug('submit preds') # this is the way to use the pydantic base model
+    logger.debug(request.client.host) # this is the way to use the pydantic base model
+    logger.debug(ages)
+    print(ages)
+    ip = request.headers['X-Real-IP'] if 'X-Real-IP' in request.headers else 'unknown'
+    batch_size = len(ages.age)
+    # save ages to database
+    if ages.age and ages.faceids:
+        for i in range(len(ages.age)):
+            db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
+            print('added',[ip,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
+    # db.print_db(conn)
+
+    mae_batch = sum([abs(ages.age[i] - ages.actual[i]) for i in range(batch_size)])/ batch_size
+    print(mae_batch)
+    global mae_human
+    global items_db
+
+    items_db, mae_human = running_mae(mae_batch, mae_human, items_db, num_items=batch_size)
+    print(items_db, mae_human, mae_comp)
+    logger.debug(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")
+
+    return {'items_db': items_db, 
+            'mae_human' : mae_human, 
+            'mae_comp' : mae_comp}
+
+
 @app.post("/backend/upload/")
 async def create_file(file: bytes = File(...)):
     print('jo')
@@ -183,6 +200,11 @@ async def create_file():
     print('jo')
 
     return {"file_size": 'success'}
+
+
+
+
+
 #%%
 
 
