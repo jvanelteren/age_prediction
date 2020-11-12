@@ -82,22 +82,27 @@ function submit_preds() {
     let url = baseurl + '/backend/submit_preds/'
 
     xhr.onload = function (e) {
-        e.preventDefault();
-        alert('break');
-        return;
+
         if (this.readyState === 4) {
             let response = JSON.parse(e.target.responseText);
-            el('result_preds').innerHTML = ('Your mean average error: '+ Math.round((total_delta_human/faces.length * 10))/10
-            +' Computer mean average error:' + Math.round((total_delta_computer/faces.length * 10))/10);
-            // Stats from backend: len(database), overall human performance, overall computer performance
-            // Your MAE xxx. Computer MAE xxx
-            // There are now xx human predictions in the database
-            // Overall humans xxx MAE, computer xxx MAE
-            
-            // You’ve beaten the computer on this batch!
-            // You’ve scored better than other humans. Your images could have been easier, or you are just good at this!
-            // The computer found these images easier (MAE xxx vs xxx)
-            
+            var won_from_comp = "You've beaten the computer on this batch!"
+            var won_from_human = "Your score is better than the average score of other humans. The faces in this batch could have been easier, or you are just good at this!"
+            var batch_difficulty = "The computer found the images in this batch easier than average"
+            var overall_winner = "Overall, the computer is performing better than humans"
+            var human_mae_batch = Math.round((total_delta_human / faces.length * 10)) / 10
+            var comp_mae_batch = Math.round((total_delta_computer / faces.length * 10)) / 10
+
+            if (comp_mae_batch < human_mae_batch); { won_from_comp = 'The computer performed better than you this batch' }
+            if (response['mae_human'] < human_mae_batch); { won_from_human = 'Other humans had a better score than you. The faces in this batch could be more difficult' }
+            if (comp_mae_batch > response['mae_comp']); { batch_difficulty = 'The computer found the images in this batch more difficult than average' }
+            if (response['mae_human'] < response['mae_comp']); { overall_winner = 'Overall, humans are ahead of the computer' }
+
+            el('result_preds').innerHTML = (
+                won_from_comp + ' (Your MAE ' + human_mae_batch + ' Computer MAE ' + comp_mae_batch + ')'
+                + '<br><br>There are now ' + response['items_db'] + ' human predictions in the database'
+                + '<br>' + overall_winner + ' (Human MAE ' + response['mae_human'] + ' Computer MAE ' + response['mae_comp'] + ')'
+                + '<br>' + won_from_human
+                + '<br>' + batch_difficulty);
         }
     };
 
@@ -154,7 +159,7 @@ function submit_preds() {
         // faces[i].style.backgroundColor = style.getPropertyValue('--danger');
     }
 
-    var obj = { 'age': arr, 'faceids': window.value, 'actual':arr_actual };
+    var obj = { 'age': arr, 'faceids': window.value, 'actual': arr_actual };
     console.log(obj);
 
     xhr.send(JSON.stringify(obj)); // with optional [body]
@@ -188,15 +193,25 @@ function submit_image() {
 
     xhr.onload = function (e) {
         //The response of de upload
-        alert('Your estimated age is '+xhr.responseText+' Enjoy your wisdom or youthfullness!');
-        xhr.responseText;
+        
+        el('img_predicted_age').innerHTML = ('Your estimated age is ' + xhr.responseText + 'Enjoy your wisdom and/or youthfullness!'
+        + "<br>And remember it's just a computer looking at pixels!");
 
     }
 
-    xhr.send(fd)
+    xhr.send(fd);
 }
+
+function reset() {
+    return;
+
+
+
+}
+
 
 document.getElementById('submit_image').addEventListener("click", submit_image)
 document.getElementById('submit_preds').addEventListener("click", submit_preds)
 document.getElementById('submit_start').addEventListener("click", submit_start)
+document.getElementById('reset').addEventListener("click", reset)
 

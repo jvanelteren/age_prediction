@@ -157,7 +157,7 @@ async def submit_preds(ages:Ages,request: Request):
     # save ages to database
     if ages.age and ages.faceids:
         for i in range(len(ages.age)):
-            db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
+            # db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
             print('added',[ip,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
     # db.print_db(conn)
 
@@ -169,10 +169,10 @@ async def submit_preds(ages:Ages,request: Request):
     items_db, mae_human = running_mae(mae_batch, mae_human, items_db, num_items=batch_size)
     print(items_db, mae_human, mae_comp)
     logger.debug(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")
-    return {'msg':'success'}
+    # return {'msg':'success'}
     return {'items_db': str(items_db), 
-            'mae_human' : str(mae_human), 
-            'mae_comp' : str(mae_comp)}
+            'mae_human' : str(round(mae_human,1)), 
+            'mae_comp' : str(round(mae_comp,1))}
 
 
 @app.post("/backend/upload/")

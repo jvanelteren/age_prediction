@@ -62,10 +62,28 @@
 
 
 
+  <ul class="nav nav-pills">
+    <div><li class="nav-item">
+        <button class="btn btn-primary" id="submit_start" type="button" data-toggle="collapse"
+        data-target="#upload" aria-expanded="true" aria-controls="upload">
+        Upload your own
+      </button>
+    </li>
+</div>
+<div>&nbsp&nbsp</div>
+<div>
+    <li class="nav-item">
+        <button class="btn btn-primary" id="submit_start" type="button" data-toggle="collapse"
+        data-target="#upload" aria-expanded="true" aria-controls="upload">
+        Upload your own
+      </button>
+    </li>
+    <div>
+
+  </ul>
 
 
-
-  <div class="collapse show" id="participate">
+  <div class="collapse" id="participate">
     <p>
       Predict 10 ages from faces and see how well you did
     </p>
@@ -115,7 +133,7 @@
     <p id='result_preds'></p>
 
   </div>
-  <div class="collapse show" id="upload">
+  <div class="collapse" id="upload">
     <p>
       Choose an picture where someone's face is more or less centered in the picture. The model will always try to give a prediction
       ,even is there is no face in the picture. 
