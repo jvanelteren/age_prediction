@@ -1,11 +1,11 @@
 "use strict";
 
 let el = x => document.getElementById(x);
-var style = getComputedStyle(document.body);
-var faces = document.getElementsByClassName('age_human');
-var comp = document.getElementsByClassName('age_pred_comp');
-var actual = document.getElementsByClassName('age_pred_actual');
-var rows = document.getElementsByClassName('rows');
+let style = getComputedStyle(document.body);
+let faces = document.getElementsByClassName('age_human');
+let comp = document.getElementsByClassName('age_pred_comp');
+let actual = document.getElementsByClassName('age_pred_actual');
+let rows = document.getElementsByClassName('rows');
 
 let baseurl
 if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
@@ -193,9 +193,9 @@ function submit_image() {
 
     xhr.onload = function (e) {
         //The response of de upload
-        
+
         el('img_predicted_age').innerHTML = ('Your estimated age is ' + xhr.responseText + 'Enjoy your wisdom and/or youthfullness!'
-        + "<br>And remember it's just a computer looking at pixels!");
+            + "<br>And remember it's just a computer looking at pixels!");
 
     }
 
@@ -203,6 +203,14 @@ function submit_image() {
 }
 
 function reset() {
+    for (var i = 0; i < faces.length; i++) { faces[i].value = "Enter your estimated age" };
+    for (var i = 0; i < comp.length; i++) { comp[i].innerHTML = "" };
+    for (var i = 0; i < actual.length; i++) { actual[i].innerHTML = "" };
+    for (var i = 0; i < rows.length; i++) { };
+    var imgs = document.getElementsByClassName('face');
+    for (var i = 0; i < imgs.length; i++) { imgs[i].innerHTML = "" };
+    submit_start();
+
     return;
 
 
@@ -210,8 +218,21 @@ function reset() {
 }
 
 
+function click_participate() {
+    document.getElementById('upload').style.display = 'none';
+    document.getElementById('participate').style.display = 'block';
+    submit_start();
+}
+function click_upload() {
+    document.getElementById('participate').style.display = 'none';
+    document.getElementById('upload').style.display = 'block';
+}
+
+
+document.getElementById('click_participate').addEventListener("click", click_participate)
+document.getElementById('click_upload').addEventListener("click", click_upload)
+
 document.getElementById('submit_image').addEventListener("click", submit_image)
 document.getElementById('submit_preds').addEventListener("click", submit_preds)
-document.getElementById('submit_start').addEventListener("click", submit_start)
 document.getElementById('reset').addEventListener("click", reset)
 

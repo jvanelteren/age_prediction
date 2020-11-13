@@ -45,15 +45,15 @@
   <section class="jumbotron text-center">
     <div class="container">
       <h1 class="jumbotron-heading">Face2Age</h1>
-      <p class="lead text-muted">How well can you estimate someone age from a photo? Participate to find out if humans can still outperform computers. Plus: upload your own photo and see how young/old the computer thinks you are</p>
+      <p class="lead text-muted">How well can you estimate someone age from a photo? Participate to find out if humans
+        can still outperform computers. Plus: upload your own photo and see how young/old the computer thinks you are
+      </p>
       <p>
-        <button class="btn btn-primary" id="submit_start" type="button" data-toggle="collapse"
-          data-target="#participate" aria-expanded="true" aria-controls="participate">
+        <button class="btn btn-primary" id="click_participate" type="button" >
           Participate in experiment
         </button>
         <!-- set aria expanded to false to initialize hidden -->
-        <button class="btn btn-primary" id="submit_start" type="button" data-toggle="collapse"
-          data-target="#upload" aria-expanded="true" aria-controls="upload">
+        <button class="btn btn-primary" id="click_upload" type="button">
           Upload your own
         </button>
       </p>
@@ -62,30 +62,9 @@
 
 
 
-  <ul class="nav nav-pills">
-    <div><li class="nav-item">
-        <button class="btn btn-primary" id="submit_start" type="button" data-toggle="collapse"
-        data-target="#upload" aria-expanded="true" aria-controls="upload">
-        Upload your own
-      </button>
-    </li>
-</div>
-<div>&nbsp&nbsp</div>
-<div>
-    <li class="nav-item">
-        <button class="btn btn-primary" id="submit_start" type="button" data-toggle="collapse"
-        data-target="#upload" aria-expanded="true" aria-controls="upload">
-        Upload your own
-      </button>
-    </li>
-    <div>
-
-  </ul>
-
-
   <div class="collapse" id="participate">
     <p>
-      Predict 10 ages from faces and see how well you did
+      Predict ages from ten different faces and see how well you did compared to the computer and other people!
     </p>
 
 
@@ -98,30 +77,45 @@
           <th scope="col">#</th>
           <th scope="col">Image</th>
           <th scope="col">Your<br>estimate</th>
-          <th scope="col">Computer<br>estimate</th>
-          <th scope="col">Actual<br>estimate</th>
         </tr>
       </thead>
       <tbody>
         <tr class='rows'>
-          <th scope="row">1</th>
-          <td class="face"><img src="data/face_age/016/23.png" class="rounded-circle" alt=""></td>
-          <td><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
+          <th scope="row" rowspan='3'>1</th>
+          <td class="face" rowspan='3'><img src="data/face_age/016/23.png" class="rounded-circle" alt=""></td>
+          <td class="age_pred_actual">actual0</td>
+
+        </tr>
+        <tr>
+          <td><input type="text" class="form-control age_human" name="" placeholder="Enter your estimated age"></td>
+        </tr>
+        <tr>
           <td class="age_pred_comp">comp0</td>
+        </tr>
+
+
+
+        <tr class='rows'>
+          <th scope="row" rowspan='3'>3</th>
+          <td class="face" rowspan='3'><img src="data/face_age/016/23.png" class="rounded-circle" alt=""></td>
+          <td class="age_pred_comp">comp0</td>
+        </tr>
+        <tr>
+          <td><input type="text" class="form-control age_human" name="" placeholder="Enter your estimated age"></td> 
+        </tr>
+        <tr>
           <td class="age_pred_actual">actual0</td>
         </tr>
+
         <tr class='rows'>
-          <th scope="row">2</th>
-          <td class="face">face_0</td>
-          <td><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
+          <th scope="row" rowspan='3'>3</th>
+          <td class="face" rowspan='3'><img src="data/face_age/016/23.png" class="rounded-circle" alt=""></td>
           <td class="age_pred_comp">comp0</td>
-          <td class="age_pred_actual">actual0</td>
         </tr>
-        <tr class='rows'>
-          <th scope="row">3</th>
-          <td class="face">face_0</td>
-          <td><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
-          <td class="age_pred_comp">comp0</td>
+        <tr>
+          <td><input type="text" class="form-control age_human" name="" placeholder="Enter your estimated age"></td> 
+        </tr>
+        <tr>
           <td class="age_pred_actual">actual0</td>
         </tr>
 
@@ -131,12 +125,13 @@
     </table>
     <button id='submit_preds' type="button" class="btn btn-primary">Submit my predictions</button>
     <p id='result_preds'></p>
+    <button id='reset' type="button" class="btn btn-primary">Play with another batch</button>
 
   </div>
   <div class="collapse" id="upload">
     <p>
-      Choose an picture where someone's face is more or less centered in the picture. The model will always try to give a prediction
-      ,even is there is no face in the picture. 
+      Choose an picture where someone's face is more or less centered in the picture. The model will always try to give
+      a prediction, even is there is no face in the picture.
     </p>
     <div class="form-group">
       <label for=""></label>
@@ -144,9 +139,10 @@
       <small id="fileHelpId" class="form-text text-muted"></small>
     </div>
     <button id='submit_image' type="button" class="btn btn-primary">Predict the age of this face</button>
-    <div id='img_predicted_age'>img_predicted_age</div>
+    <div id='img_predicted_age'></div>
 
   </div>
+  
 
 </body>
 
