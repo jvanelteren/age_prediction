@@ -157,7 +157,7 @@ async def submit_preds(ages:Ages,request: Request):
     # save ages to database
     if ages.age and ages.faceids:
         for i in range(len(ages.age)):
-            # db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
+            db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
             print('added',[ip,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
     # db.print_db(conn)
 

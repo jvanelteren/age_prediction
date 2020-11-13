@@ -49,7 +49,7 @@
         can still outperform computers. Plus: upload your own photo and see how young/old the computer thinks you are
       </p>
       <p>
-        <button class="btn btn-primary" id="click_participate" type="button" >
+        <button class="btn btn-primary" id="click_participate" type="button">
           Participate in experiment
         </button>
         <!-- set aria expanded to false to initialize hidden -->
@@ -74,49 +74,49 @@
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Image</th>
-          <th scope="col">Your<br>estimate</th>
+          <th scope="col">Face to predict</th>
+          <th scope="col">Estimate</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
         <tr class='rows'>
-          <th scope="row" rowspan='3'>1</th>
-          <td class="face" rowspan='3'><img src="data/face_age/016/23.png" class="rounded-circle" alt=""></td>
+          <td class="face" rowspan='3'></td>
+          <td class='label'>Actual</td>
           <td class="age_pred_actual">actual0</td>
-
         </tr>
-        <tr>
-          <td><input type="text" class="form-control age_human" name="" placeholder="Enter your estimated age"></td>
-        </tr>
-        <tr>
-          <td class="age_pred_comp">comp0</td>
-        </tr>
-
-
-
         <tr class='rows'>
-          <th scope="row" rowspan='3'>3</th>
-          <td class="face" rowspan='3'><img src="data/face_age/016/23.png" class="rounded-circle" alt=""></td>
+          <td colspan="2"><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
+        </tr>
+        <tr class='rows'>
+          <td class='label'>Model</td>
           <td class="age_pred_comp">comp0</td>
-        </tr>
-        <tr>
-          <td><input type="text" class="form-control age_human" name="" placeholder="Enter your estimated age"></td> 
-        </tr>
-        <tr>
-          <td class="age_pred_actual">actual0</td>
         </tr>
 
         <tr class='rows'>
-          <th scope="row" rowspan='3'>3</th>
-          <td class="face" rowspan='3'><img src="data/face_age/016/23.png" class="rounded-circle" alt=""></td>
+          <td class="face" rowspan='3'></td>
+          <td class='label'>Actual</td>
+          <td class="age_pred_actual">actual0</td>
+        </tr>
+        <tr class='rows'>
+          <td colspan="2"><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
+        </tr>
+        <tr class='rows'>
+          <td class='label'>Model</td>
           <td class="age_pred_comp">comp0</td>
         </tr>
-        <tr>
-          <td><input type="text" class="form-control age_human" name="" placeholder="Enter your estimated age"></td> 
-        </tr>
-        <tr>
+
+        <tr class='rows'>
+          <td class="face" rowspan='3'></td>
+          <td class='label'>Actual</td>
           <td class="age_pred_actual">actual0</td>
+        </tr>
+        <tr class='rows'>
+          <td colspan="2"><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
+        </tr>
+        <tr class='rows'>
+          <td class='label'>Model</td>
+          <td class="age_pred_comp">comp0</td>
         </tr>
 
 
@@ -142,7 +142,7 @@
     <div id='img_predicted_age'></div>
 
   </div>
-  
+
 
 </body>
 

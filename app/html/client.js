@@ -6,8 +6,10 @@ let faces = document.getElementsByClassName('age_human');
 let comp = document.getElementsByClassName('age_pred_comp');
 let actual = document.getElementsByClassName('age_pred_actual');
 let rows = document.getElementsByClassName('rows');
+let labels = document.getElementsByClassName('label');
+let initial_state = true;
 
-let baseurl
+let baseurl;
 if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
     // alert('local')
     baseurl = 'http://127.0.0.1:5000';
@@ -19,6 +21,7 @@ else {
 
 
 function submit_start() {
+    reset()
     //  gets faces from server
     let xhr = new XMLHttpRequest();
     let url = baseurl + '/backend/get_images/'
@@ -77,6 +80,7 @@ function submit_start() {
 }
 
 function submit_preds() {
+    if (!initial_state) { return };
 
     let xhr = new XMLHttpRequest();
     let url = baseurl + '/backend/submit_preds/'
@@ -132,26 +136,28 @@ function submit_preds() {
 
     }
 
-    var total_delta_human = 0
-    var total_delta_computer = 0
+    var total_delta_human = 0;
+    var total_delta_computer = 0;
     for (var i = 0; i < faces.length; i++) {
         comp[i].style.display = 'table-cell' // to make visible
         actual[i].style.display = 'table-cell' // to make visible
 
         var delta_human = Math.abs(faces[i].value - actual[i].innerHTML);
         var delta_computer = Math.abs(comp[i].innerHTML - actual[i].innerHTML);
-        total_delta_human += delta_human
-        total_delta_computer += delta_computer
-        var delta = (comp[i].value - actual[i].value)
-        if (delta_human < delta_computer) {
-            //  block of code to be executed if condition1 is true
-            rows[i].style.backgroundColor = style.getPropertyValue('--success');
-        } else if (delta_human > delta_computer) {
-            rows[i].style.backgroundColor = style.getPropertyValue('--danger');
-            //  block of code to be executed if the condition1 is false and condition2 is true
-        } else {
-            rows[i].style.backgroundColor = style.getPropertyValue('--info');
-            //  block of code to be executed if the condition1 is false and condition2 is false
+        total_delta_human += delta_human;
+        total_delta_computer += delta_computer;
+        var delta = (comp[i].value - actual[i].value);
+        for (var j = i * 3; j < i * 3 + 3; j++) {
+            if (delta_human < delta_computer) {
+                //  block of code to be executed if condition1 is true
+                rows[j].style.backgroundColor = style.getPropertyValue('--success');
+            } else if (delta_human > delta_computer) {
+                rows[j].style.backgroundColor = style.getPropertyValue('--danger');
+                //  block of code to be executed if the condition1 is false and condition2 is true
+            } else {
+                rows[j].style.backgroundColor = style.getPropertyValue('--info');
+                //  block of code to be executed if the condition1 is false and condition2 is false
+            }
         }
 
         // actual[i].style.backgroundColor = style.getPropertyValue('--success');
@@ -159,9 +165,12 @@ function submit_preds() {
         // faces[i].style.backgroundColor = style.getPropertyValue('--danger');
     }
 
+    for (var i = 0; i < labels.length; i++) {
+        labels[i].style.display = 'table-cell'; // to make visible    
+    };
     var obj = { 'age': arr, 'faceids': window.value, 'actual': arr_actual };
     console.log(obj);
-
+    initial_state = false
     xhr.send(JSON.stringify(obj)); // with optional [body]
 
 
@@ -188,14 +197,13 @@ function submit_image() {
     var fd = new FormData();
     fd.append("file", file);
 
-
-
-
     xhr.onload = function (e) {
         //The response of de upload
+        let response = JSON.parse(e.target.responseText);
 
-        el('img_predicted_age').innerHTML = ('Your estimated age is ' + xhr.responseText + 'Enjoy your wisdom and/or youthfullness!'
-            + "<br>And remember it's just a computer looking at pixels!");
+
+        el('img_predicted_age').innerHTML = ('<br>Your estimated age is ' + response['status'] + '<br>Enjoy your wisdom and/or youthfullness!'
+            + "<br>And remember: it's just a computer looking at pixels, you are as old as you feel &#128519;");
 
     }
 
@@ -203,13 +211,27 @@ function submit_image() {
 }
 
 function reset() {
-    for (var i = 0; i < faces.length; i++) { faces[i].value = "Enter your estimated age" };
-    for (var i = 0; i < comp.length; i++) { comp[i].innerHTML = "" };
-    for (var i = 0; i < actual.length; i++) { actual[i].innerHTML = "" };
-    for (var i = 0; i < rows.length; i++) { };
+    initial_state = true
+    for (var i = 0; i < faces.length; i++) {
+        faces[i].value = '';}
+    for (var i = 0; i < comp.length; i++) {
+        comp[i].innerHTML = "";
+        comp[i].style.display = 'none' // to make visible    
+    };
+    for (var i = 0; i < actual.length; i++) {
+        actual[i].innerHTML = "";
+        actual[i].style.display = 'none' // to make visible    
+    };
+    for (var i = 0; i < labels.length; i++) {
+        labels[i].style.display = 'none' // to make visible    
+    };
+    for (var i = 0; i < rows.length; i++) { rows[i].style.backgroundColor = style.getPropertyValue('--bg-light');};
     var imgs = document.getElementsByClassName('face');
+    el('result_preds').innerHTML=""
+
+
+
     for (var i = 0; i < imgs.length; i++) { imgs[i].innerHTML = "" };
-    submit_start();
 
     return;
 
@@ -219,6 +241,7 @@ function reset() {
 
 
 function click_participate() {
+    
     document.getElementById('upload').style.display = 'none';
     document.getElementById('participate').style.display = 'block';
     submit_start();
@@ -229,10 +252,9 @@ function click_upload() {
 }
 
 
-document.getElementById('click_participate').addEventListener("click", click_participate)
-document.getElementById('click_upload').addEventListener("click", click_upload)
+document.getElementById('click_participate').addEventListener("click", click_participate);
+document.getElementById('click_upload').addEventListener("click", click_upload);
 
-document.getElementById('submit_image').addEventListener("click", submit_image)
-document.getElementById('submit_preds').addEventListener("click", submit_preds)
-document.getElementById('reset').addEventListener("click", reset)
-
+document.getElementById('submit_image').addEventListener("click", submit_image);
+document.getElementById('submit_preds').addEventListener("click", submit_preds);
+document.getElementById('reset').addEventListener("click", click_participate);
