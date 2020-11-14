@@ -251,6 +251,9 @@ function click_upload() {
     document.getElementById('upload').style.display = 'block';
 }
 
+function goto_blog() {
+    window.open('https://jvanelteren.github.io/blog/2020/11/15/age_pure_pytorch.html','_blank');
+}
 
 document.getElementById('click_participate').addEventListener("click", click_participate);
 document.getElementById('click_upload').addEventListener("click", click_upload);
@@ -258,3 +261,4 @@ document.getElementById('click_upload').addEventListener("click", click_upload);
 document.getElementById('submit_image').addEventListener("click", submit_image);
 document.getElementById('submit_preds').addEventListener("click", submit_preds);
 document.getElementById('reset').addEventListener("click", click_participate);
+document.getElementById('goto_blog').addEventListener("click", goto_blog);
