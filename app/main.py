@@ -108,6 +108,7 @@ conn = db.open_db('app/predictions.db')
 print('started')
 
 items_db = db.count_predictions(conn)
+if not items_db: items_db = 0
 mae_human = db.human_mae(conn)
 mae_comp = round(df['loss'].mean(),1)
 logger.debug(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")

@@ -89,3 +89,5 @@ def human_mae(conn):
 # c = count_predictions(conn)
 # del_all_records(conn)
 # c
+
+# %%
