@@ -87,9 +87,5 @@ def human_mae(conn):
 #%%
 # conn = open_db('predictions.db')
 # c = count_predictions(conn)
-# print_db(conn)
-
-# # # %%
-# h = human_mae(conn)
-# h
-# %%
+# del_all_records(conn)
+# c

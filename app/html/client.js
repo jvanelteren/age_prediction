@@ -86,20 +86,32 @@ function submit_preds() {
     let url = baseurl + '/backend/submit_preds/'
 
     xhr.onload = function (e) {
-
+        alert('hi');
+        
         if (this.readyState === 4) {
+            alert('hi2');
             let response = JSON.parse(e.target.responseText);
-            var won_from_comp = "You've beaten the computer on this batch!"
-            var won_from_human = "Your score is better than the average score of other humans. The faces in this batch could have been easier, or you are just good at this!"
-            var batch_difficulty = "The computer found the images in this batch easier than average"
-            var overall_winner = "Overall, the computer is performing better than humans"
-            var human_mae_batch = Math.round((total_delta_human / faces.length * 10)) / 10
-            var comp_mae_batch = Math.round((total_delta_computer / faces.length * 10)) / 10
+            var won_from_comp = "You've beaten the computer on this batch!";
+            var won_from_human = "Your score is better than the average score of other humans. The faces in this batch could have been easier, or you are just good at this!";
+            var batch_difficulty = "The computer found the images in this batch easier than average";
+            var overall_winner = "Overall, the computer is performing better than humans";
+            var human_mae_batch = Math.round((total_delta_human / faces.length * 10)) / 10;
+            var comp_mae_batch = Math.round((total_delta_computer / faces.length * 10)) / 10;
+            response['mae_human'] = parseFloat(response['mae_human']);
+            response['mae_comp'] = parseFloat(response['mae_comp']);
 
-            if (comp_mae_batch < human_mae_batch); { won_from_comp = 'The computer performed better than you this batch' }
-            if (response['mae_human'] < human_mae_batch); { won_from_human = 'Other humans had a better score than you. The faces in this batch could be more difficult' }
-            if (comp_mae_batch > response['mae_comp']); { batch_difficulty = 'The computer found the images in this batch more difficult than average' }
-            if (response['mae_human'] < response['mae_comp']); { overall_winner = 'Overall, humans are ahead of the computer' }
+            alert(won_from_comp+' '+comp_mae_batch+' '+human_mae_batch);
+            if (comp_mae_batch < human_mae_batch) { won_from_comp = 'The computer performed better than you this batch' };
+            alert(won_from_comp);
+            alert(overall_winner + ''+response['mae_human'] + ' '+response['mae_comp'] );
+            if (response['mae_human'] < response['mae_comp']) { overall_winner = 'Overall, humans are ahead of the computer' };
+            alert(overall_winner);
+            alert(won_from_human + ' ' + response['mae_human'] + ' '+ human_mae_batch);
+            if (response['mae_human'] < human_mae_batch) { won_from_human = 'Other humans had a better score than you. The faces in this batch could be more difficult' };
+            alert(won_from_human);
+            alert(batch_difficulty + ' '+ comp_mae_batch + ' ' + response['mae_comp']);
+            if (comp_mae_batch > response['mae_comp']) { batch_difficulty = 'The computer found the images in this batch more difficult than average' };
+            alert(batch_difficulty);
 
             el('result_preds').innerHTML = (
                 won_from_comp + ' (Your MAE ' + human_mae_batch + ' Computer MAE ' + comp_mae_batch + ')'
