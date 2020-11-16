@@ -132,9 +132,9 @@ async def return_images():
     # logger.debug('get images') # this is the way to use the pydantic base model
     # n=10
 
-    batch_info_df = df.loc[next_batch(img_batch_gen,4)]
+    batch_info_df = df.loc[next_batch(img_batch_gen,10)]
 
-    faces = list(range(10)) # this was a placeholder for images, but can be approached locally
+    faces = list(range(1,11)) # this was a placeholder for images, but can be approached locally
     faceids = ['../../'+str(f) for f in batch_info_df['path']]
     computer = list(batch_info_df['pred'])
     actual = list(batch_info_df['actual'])
