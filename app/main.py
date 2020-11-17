@@ -30,6 +30,7 @@ class Ages(BaseModel):
     age: List[int] = []
     faceids: List[str] = []
     actual: List[int] = []
+    comp: List[int] = []
 
 app = FastAPI()
 
@@ -85,7 +86,7 @@ def img_to_reshaped_normalized_tensor(img):
         print('3',img.shape)
         return img
 model = AgeResnet()
-model.load_state_dict(torch.load('app/models/model4.3',map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('data/models/model4.18',map_location=torch.device('cpu')))
 model.eval()
 
 def gen_img_ids():
@@ -113,13 +114,6 @@ mae_human = db.human_mae(conn)
 mae_comp = round(df['loss'].mean(),1)
 logger.debug(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")
 
-
-def running_mae(mae_batch, mae_db_before, items_db_before, num_items=10):
-    items_db_after = items_db_before + num_items
-    mae_after = (mae_batch * num_items + mae_db_before * items_db_before)/items_db_after
-    return (items_db_after, mae_after)
-
- 
 
 
 @app.get("/backend/get_images/") 
@@ -150,30 +144,17 @@ async def return_images():
 @app.post("/backend/submit_preds/") #use post since server receives
 async def submit_preds(ages:Ages,request: Request):
     logger.debug('submit preds') # this is the way to use the pydantic base model
-    logger.debug(request.client.host) # this is the way to use the pydantic base model
-    logger.debug(ages)
-    print(ages)
     ip = request.headers['X-Real-IP'] if 'X-Real-IP' in request.headers else 'unknown'
     batch_size = len(ages.age)
     # save ages to database
     if ages.age and ages.faceids:
         for i in range(len(ages.age)):
-            db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
-            print('added',[ip,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i]))])
-    # db.print_db(conn)
+            db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
+            print('added',[ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
 
-    mae_batch = sum([abs(ages.age[i] - ages.actual[i]) for i in range(batch_size)])/ batch_size
-    print(mae_batch)
-    global mae_human
-    global items_db
-
-    items_db, mae_human = running_mae(mae_batch, mae_human, items_db, num_items=batch_size)
-    print(items_db, mae_human, mae_comp)
-    logger.debug(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")
-    # return {'msg':'success'}
-    return {'items_db': str(items_db), 
-            'mae_human' : str(round(mae_human,1)), 
-            'mae_comp' : str(round(mae_comp,1))}
+    return {'items_db': str(db.count_predictions(conn)), 
+            'mae_human' : str(round(db.human_mae(conn),1)), 
+            'mae_comp' : str(round(db.comp_mae(conn),1))}
 
 
 @app.post("/backend/upload/")

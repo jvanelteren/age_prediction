@@ -134,9 +134,17 @@ function submit_preds() {
     }
     var arr_actual = []
     for (var i = 0; i < faces.length; i++) {
-        arr_actual.push(comp[i].innerHTML);
-
+        arr_actual.push(actual[i].innerHTML);
+        
     }
+    
+    var arr_comp = []
+    for (var i = 0; i < faces.length; i++) {
+        arr_comp.push(comp[i].innerHTML);
+        
+    }
+    
+    
 
     var total_delta_human = 0;
     var total_delta_computer = 0;
@@ -170,7 +178,7 @@ function submit_preds() {
     for (var i = 0; i < labels.length; i++) {
         labels[i].style.display = 'table-cell'; // to make visible    
     };
-    var obj = { 'age': arr, 'faceids': window.value, 'actual': arr_actual };
+    var obj = { 'age': arr, 'faceids': window.value, 'actual': arr_actual, 'comp':arr_comp };
     console.log(obj);
     initial_state = false
     xhr.send(JSON.stringify(obj)); // with optional [body]

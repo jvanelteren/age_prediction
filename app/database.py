@@ -20,8 +20,8 @@ def create_table(conn, create_table_sql):
 
 def create_pred(conn, prediction):
     print(prediction)
-    sql = """ INSERT INTO predictions(date, ip, image_path, prediction, actual, abs_error)
-              VALUES(DATE('now'),?,?,?,?,?) """
+    sql = """ INSERT INTO predictions(date, ip, image_path, prediction, actual, abs_error, prediction_comp, abs_error_comp)
+              VALUES(DATE('now'),?,?,?,?,?,?,?) """
     cur = conn.cursor()
     cur.execute(sql,prediction)
     conn.commit()
@@ -60,7 +60,10 @@ def open_db(name):
                                         image_path text NOT NULL,
                                         prediction integer NOT NULL,
                                         actual integer NOT NULL,
-                                        abs_error integer NOT NULL)
+                                        abs_error integer NOT NULL,
+                                        prediction_comp integer NOT NULL,
+                                        abs_error_comp integer NOT NULL                                        
+                                        )
                                     """
 
     conn = create_con(name)
@@ -82,6 +85,10 @@ def print_db(conn):
 def human_mae(conn):
     cur = conn.cursor()
     return cur.execute("SELECT AVG(abs_error) FROM predictions").fetchall()[0][0]
+
+def comp_mae(conn):
+    cur = conn.cursor()
+    return cur.execute("SELECT AVG(abs_error_comp) FROM predictions").fetchall()[0][0]
 
 
 #%%
