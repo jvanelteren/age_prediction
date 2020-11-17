@@ -179,7 +179,7 @@ async def create_file(file: bytes = File(...)):
     # todo resizing, normalizing and running it through a model and returning the prediction
 
 
-    return {"status": str(pred.item())}
+    return {"status": str(round(pred.item()))}
 
 @app.post("/backend/test/")
 async def create_file():

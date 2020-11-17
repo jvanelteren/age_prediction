@@ -199,7 +199,7 @@ function submit_image() {
 
     //if the file isn't a image nothing happens.
     //you are free to implement a fallback
-    if (!file || !file.type.match(/image.*/)) alert('hoooes');
+    if (!file || !file.type.match(/image.*/)) alert('File not recognized as an image');
 
     //Creates the FormData object and attach to a key name "file"
 
