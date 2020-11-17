@@ -16,5 +16,6 @@
 /data
 /fastbook
 /runs
+/config
 /app/uploads
 resnet34-5cycles-lr005
