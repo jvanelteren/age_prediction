@@ -1,6 +1,5 @@
 #%%
-from enum import Enum
-from typing import Optional, List
+from typing import List
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import logging
@@ -14,7 +13,12 @@ from PIL import Image
 from io import BytesIO
 import time
 from datetime import datetime
-import torchvision
+import os
+import app.database as db
+from torchvision import transforms
+import torch
+from torch import nn
+
 # you can specify allowed origins, or just allow everything with ["*"]
 origins = [
     "http://34.121.58.11/",
@@ -23,7 +27,6 @@ origins = [
     "http://localhost:8080",
 ]
 
-import os
 if os.getcwd()=='/ds/app':
     os.chdir('/ds')
 class Ages(BaseModel):
@@ -46,11 +49,6 @@ logger = logging.getLogger("gunicorn")
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG) # the log level needs to be set here and not in uvicorn!
 
-import os
-import app.database as db
-from torchvision import transforms
-import torch
-from torch import nn
 
 class AgeResnet(nn.Module):
     def __init__(self, size='18', feat_extract=False):
@@ -115,7 +113,6 @@ mae_comp = round(df['loss'].mean(),1)
 logger.debug(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")
 
 
-
 @app.get("/backend/get_images/") 
 async def return_images():
     now = datetime.now()
@@ -126,9 +123,9 @@ async def return_images():
     # logger.debug('get images') # this is the way to use the pydantic base model
     # n=10
 
-    batch_info_df = df.loc[next_batch(img_batch_gen,10)]
+    batch_info_df = df.loc[next_batch(img_batch_gen,6)]
 
-    faces = list(range(1,11)) # this was a placeholder for images, but can be approached locally
+    faces = list(range(1,7)) # this was a placeholder for images, but can be approached locally
     faceids = ['../../'+str(f) for f in batch_info_df['path']]
     computer = list(batch_info_df['pred'])
     actual = list(batch_info_df['actual'])
@@ -173,9 +170,9 @@ async def create_file(file: bytes = File(...)):
     img_t = img_to_reshaped_normalized_tensor(pil_image)
 
     pred = model(img_t[None])
-    from pathlib import Path
-    path = Path('app/uploads/')
-    pil_image.save(path/(str(time.time())+'.png'),"PNG")
+    # from pathlib import Path
+    # path = Path('app/uploads/')
+    # pil_image.save(path/(str(time.time())+'.png'),"PNG")
     # todo resizing, normalizing and running it through a model and returning the prediction
 
 
