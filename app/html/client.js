@@ -106,9 +106,9 @@ function submit_preds() {
             el('result_preds').innerHTML = (
                 won_from_comp + ' (Your MAE ' + human_mae_batch + ' Computer MAE ' + comp_mae_batch + ')'
                 + '<br><br>There are now ' + response['items_db'] + ' human predictions in the database'
-                + '<br>' + overall_winner + ' (Human MAE ' + response['mae_human'] + ' Computer MAE ' + response['mae_comp'] + ')'
-                + '<br>' + won_from_human
-                + '<br>' + batch_difficulty);
+                + '<br><br>' + overall_winner + ' (Human MAE ' + response['mae_human'] + ' Computer MAE ' + response['mae_comp'] + ')'
+                + '<br><br>' + won_from_human
+                + '<br><br>' + batch_difficulty);
         }
     };
 
@@ -200,6 +200,7 @@ function submit_image() {
     //if the file isn't a image nothing happens.
     //you are free to implement a fallback
     if (!file || !file.type.match(/image.*/)) alert('File not recognized as an image');
+    el('img_predicted_age').innerHTML = 'Running the model, this can take a couple of seconds...'
 
     //Creates the FormData object and attach to a key name "file"
 
