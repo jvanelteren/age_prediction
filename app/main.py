@@ -15,6 +15,7 @@ import time
 from datetime import datetime
 import os
 import app.database as db
+import torchvision
 from torchvision import transforms
 import torch
 from torch import nn
