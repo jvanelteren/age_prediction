@@ -86,7 +86,7 @@ function submit_preds() {
     let url = baseurl + '/backend/submit_preds/'
 
     xhr.onload = function (e) {
-        
+
         if (this.readyState === 4) {
             let response = JSON.parse(e.target.responseText);
             var won_from_comp = "You've beaten the computer on this batch!";
@@ -135,16 +135,16 @@ function submit_preds() {
     var arr_actual = []
     for (var i = 0; i < faces.length; i++) {
         arr_actual.push(actual[i].innerHTML);
-        
+
     }
-    
+
     var arr_comp = []
     for (var i = 0; i < faces.length; i++) {
         arr_comp.push(comp[i].innerHTML);
-        
+
     }
-    
-    
+
+
 
     var total_delta_human = 0;
     var total_delta_computer = 0;
@@ -178,7 +178,7 @@ function submit_preds() {
     for (var i = 0; i < labels.length; i++) {
         labels[i].style.display = 'table-cell'; // to make visible    
     };
-    var obj = { 'age': arr, 'faceids': window.value, 'actual': arr_actual, 'comp':arr_comp };
+    var obj = { 'age': arr, 'faceids': window.value, 'actual': arr_actual, 'comp': arr_comp };
     console.log(obj);
     initial_state = false
     xhr.send(JSON.stringify(obj)); // with optional [body]
@@ -224,7 +224,8 @@ function submit_image() {
 function reset() {
     initial_state = true
     for (var i = 0; i < faces.length; i++) {
-        faces[i].value = '';}
+        faces[i].value = '';
+    }
     for (var i = 0; i < comp.length; i++) {
         comp[i].innerHTML = "";
         comp[i].style.display = 'none' // to make visible    
@@ -236,9 +237,9 @@ function reset() {
     for (var i = 0; i < labels.length; i++) {
         labels[i].style.display = 'none' // to make visible    
     };
-    for (var i = 0; i < rows.length; i++) { rows[i].style.backgroundColor = style.getPropertyValue('--bg-light');};
+    for (var i = 0; i < rows.length; i++) { rows[i].style.backgroundColor = style.getPropertyValue('--bg-light'); };
     var imgs = document.getElementsByClassName('face');
-    el('result_preds').innerHTML=""
+    el('result_preds').innerHTML = ""
 
 
 
@@ -252,18 +253,21 @@ function reset() {
 
 
 function click_participate() {
-    
+
     document.getElementById('upload').style.display = 'none';
     document.getElementById('participate').style.display = 'block';
     submit_start();
+    faces[0].focus();
+
 }
 function click_upload() {
     document.getElementById('participate').style.display = 'none';
     document.getElementById('upload').style.display = 'block';
+    document.getElementById('upload').focus();
 }
 
 function goto_blog() {
-    window.open('https://jvanelteren.github.io/blog/2020/11/15/age_pure_pytorch.html','_blank');
+    window.open('https://jvanelteren.github.io/blog/2020/11/15/age_pure_pytorch.html', '_blank');
 }
 
 document.getElementById('click_participate').addEventListener("click", click_participate);

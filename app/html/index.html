@@ -45,8 +45,8 @@
   <section class="jumbotron text-center">
     <div class="container">
       <h1 class="jumbotron-heading">Face2Age</h1>
-      <p class="lead text-muted">How well can you estimate someone age from a photo? Participate to find out if humans
-        can still outperform computers. Plus: upload your own photo and see how young/old the computer thinks you are
+      <p class="lead text-muted">How well can you estimate someone age from an image? Participate to find out if humans
+        can still outperform computers. Plus: upload your own image and see how young/old the computer thinks you are
       </p>
       <p>
         <button class="btn btn-primary" id="click_participate" type="button">
@@ -95,7 +95,7 @@
           <td colspan="2"><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
         </tr>
         <tr class='rows'>
-          <td class='label'>Model</td>
+          <td class='label'>Computer</td>
           <td class="age_pred_comp">comp0</td>
         </tr>
 
@@ -108,7 +108,7 @@
           <td colspan="2"><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
         </tr>
         <tr class='rows'>
-          <td class='label'>Model</td>
+          <td class='label'>Computer</td>
           <td class="age_pred_comp">comp0</td>
         </tr>
 
@@ -121,9 +121,10 @@
           <td colspan="2"><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
         </tr>
         <tr class='rows'>
-          <td class='label'>Model</td>
+          <td class='label'>Computer</td>
           <td class="age_pred_comp">comp0</td>
-        </tr>        <tr class='rows'>
+        </tr>
+        <tr class='rows'>
           <td class="face" rowspan='3'></td>
           <td class='label'>Actual</td>
           <td class="age_pred_actual">actual0</td>
@@ -132,7 +133,7 @@
           <td colspan="2"><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
         </tr>
         <tr class='rows'>
-          <td class='label'>Model</td>
+          <td class='label'>Computer</td>
           <td class="age_pred_comp">comp0</td>
         </tr>
 
@@ -145,7 +146,7 @@
           <td colspan="2"><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
         </tr>
         <tr class='rows'>
-          <td class='label'>Model</td>
+          <td class='label'>Computer</td>
           <td class="age_pred_comp">comp0</td>
         </tr>
 
@@ -158,29 +159,29 @@
           <td colspan="2"><input type="text" class="form-control age_human" name="" placeholder="Enter age"></td>
         </tr>
         <tr class='rows'>
-          <td class='label'>Model</td>
+          <td class='label'>Computer</td>
           <td class="age_pred_comp">comp0</td>
-        </tr>   
-        
+        </tr>
+
       </tbody>
     </table>
-    <button id='submit_preds' type="button" class="btn btn-primary">Submit my predictions</button>
     <p id='result_preds'></p>
-    <button id='reset' type="button" class="btn btn-primary">Play with another batch</button>
+    <button id='submit_preds' type="button" class="btn btn-primary">Submit my predictions</button>
+    <button id='reset' type="button" class="btn btn-primary">Play again</button>
 
   </div>
   <div class="collapse" id="upload">
     <p>
-      Choose an picture where someone's face is more or less centered in the picture. The model will always try to give
-      a prediction, even is there is no face in the picture. Your picture will not be saved in any way, so it's anonymous.
+      Choose an image or make a selfie. The computer will always try to give a prediction, even is there is no face in
+      the image. Your image will not be saved in any form, so it's anonymous.
     </p>
     <div class="form-group">
       <label for=""></label>
       <input type="file" class="form-control-file" name="" id="upload" placeholder="" aria-describedby="fileHelpId">
       <small id="fileHelpId" class="form-text text-muted"></small>
     </div>
-    <button id='submit_image' type="button" class="btn btn-primary">Predict the age of this face</button>
     <div id='img_predicted_age'></div>
+    <button id='submit_image' type="button" class="btn btn-primary">Predict the age of this face</button>
 
   </div>
 
