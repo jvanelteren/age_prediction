@@ -14,7 +14,7 @@ from io import BytesIO
 import time
 from datetime import datetime
 import os
-import app.database as db
+import app.db.database as db
 import torchvision
 from torchvision import transforms
 import torch
@@ -46,7 +46,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-logger = logging.getLogger("gunicorn")
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG) # the log level needs to be set here and not in uvicorn!
 
@@ -85,7 +84,7 @@ def img_to_reshaped_normalized_tensor(img):
         print('3',img.shape)
         return img
 model = AgeResnet()
-model.load_state_dict(torch.load('data/models/model4.18',map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('app/models/model4.18',map_location=torch.device('cpu')))
 model.eval()
 
 def gen_img_ids():
@@ -104,8 +103,8 @@ df = pickle.load(f)
 logger.debug(f'number of items in dataset {len(df)}')
 img_batch_gen = gen_img_ids()
 
-conn = db.open_db('app/predictions.db')
-conn2 = db.open_db('uploads.db')
+conn = db.open_db('app/db/predictions.db')
+conn2 = db.open_upload('app/db/uploads.db')
 print('started')
 
 num_uploads = db.count_uploads(conn2)
@@ -113,7 +112,7 @@ items_db = db.count_predictions(conn)
 if not items_db: items_db = 0
 mae_human = db.human_mae(conn)
 mae_comp = round(df['loss'].mean(),1)
-logger.debug(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")
+print(f"{items_db} items in database, mae human {mae_human}, mae_comp {mae_comp}")
 
 
 @app.get("/backend/get_images/") 
@@ -181,8 +180,8 @@ async def create_file(file: bytes = File(...)):
 
     return {"status": str(round(pred.item()))}
 
-@app.post("/backend/stats/")
-async def create_file():
+@app.get("/backend/stats/")
+async def send_stats():
     return {"num_uploads": db.count_uploads(conn2),
             "num_predictions": db.count_predictions(conn)}
 
