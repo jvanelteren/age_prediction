@@ -105,8 +105,10 @@ logger.debug(f'number of items in dataset {len(df)}')
 img_batch_gen = gen_img_ids()
 
 conn = db.open_db('app/predictions.db')
+conn2 = db.open_db('uploads.db')
 print('started')
 
+num_uploads = db.count_uploads(conn2)
 items_db = db.count_predictions(conn)
 if not items_db: items_db = 0
 mae_human = db.human_mae(conn)
@@ -157,7 +159,6 @@ async def submit_preds(ages:Ages,request: Request):
 
 @app.post("/backend/upload/")
 async def create_file(file: bytes = File(...)):
-    print('jo')
     # 
     try:
         # transforms.functional.pil_to_tensor
@@ -175,15 +176,15 @@ async def create_file(file: bytes = File(...)):
     # path = Path('app/uploads/')
     # pil_image.save(path/(str(time.time())+'.png'),"PNG")
     # todo resizing, normalizing and running it through a model and returning the prediction
+    db.add_upload(conn2)
 
 
     return {"status": str(round(pred.item()))}
 
-@app.post("/backend/test/")
+@app.post("/backend/stats/")
 async def create_file():
-    print('jo')
-
-    return {"file_size": 'success'}
+    return {"num_uploads": db.count_uploads(conn2),
+            "num_predictions": db.count_predictions(conn)}
 
 
 

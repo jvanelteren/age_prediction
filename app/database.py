@@ -27,6 +27,14 @@ def create_pred(conn, prediction):
     conn.commit()
     return cur.lastrowid
 
+def create_upload(conn):
+    sql = """ INSERT INTO uploads(date)
+              VALUES(DATE('now')) """
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+    return cur.lastrowid
+
 def do_sql(conn,sql):
     cur = conn.cursor()
     cur.execute(sql)
@@ -37,6 +45,10 @@ def do_sql(conn,sql):
 def count_predictions(conn):
     cur = conn.cursor()
     return cur.execute("SELECT COUNT (*) FROM predictions;").fetchall()[0][0]
+
+def count_uploads(conn):
+    cur = conn.cursor()
+    return cur.execute("SELECT COUNT (*) FROM uploads;").fetchall()[0][0]
 
 def count_distinct_predictions(conn):
     cur = conn.cursor()
@@ -69,7 +81,7 @@ def open_db(name):
     conn = create_con(name)
 
     if conn:
-        engine = create_engine('sqlite:///%s' % 'hi.db', echo=True)
+        # engine = create_engine('sqlite:///%s' % 'hi.db', echo=True)
         # c = conn.cursor()
         # c.execute(""" DROP TABLE IF EXISTS games""")
         # create_table(conn, sql_create_table_games)
@@ -77,6 +89,25 @@ def open_db(name):
         create_table(conn, sql_create_table_predictions)
         
     return conn
+
+def open_upload(name):
+    sql_create_table_uploads = """ CREATE TABLE IF NOT EXISTS uploads(
+                                        id integer PRIMARY KEY,
+                                        date text NOT NULL
+                                        )
+                                    """
+
+    conn2 = create_con(name)
+
+    if conn2:
+        engine = create_engine('sqlite:///%s' % 'hi.db', echo=True)
+        # c = conn.cursor()
+        # c.execute(""" DROP TABLE IF EXISTS games""")
+        # create_table(conn, sql_create_table_games)
+        # c.execute(""" DROP TABLE IF EXISTS predictions""")
+        create_table(conn2, sql_create_table_uploads)
+        
+    return conn2
 
 def print_db(conn):
     for i in conn.cursor().execute("SELECT * FROM predictions"):
@@ -89,6 +120,8 @@ def human_mae(conn):
 def comp_mae(conn):
     cur = conn.cursor()
     return cur.execute("SELECT AVG(abs_error_comp) FROM predictions").fetchall()[0][0]
+
+
 
 
 #%%
