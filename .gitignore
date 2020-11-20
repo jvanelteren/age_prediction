@@ -13,7 +13,6 @@
 /.vscode
 /.vscode-server
 /.fastai
-/data/face_age
 /fastbook
 /runs
 /config
