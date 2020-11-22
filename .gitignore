@@ -19,3 +19,5 @@
 /app/uploads
 resnet34-5cycles-lr005
 /test
+app/__pycache__/main.cpython-38.pyc
+app/__pycache__/main.cpython-38.pyc
