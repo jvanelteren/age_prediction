@@ -39,7 +39,7 @@ function submit_start() {
             // el('demo').innerHTML = `Result = ${response['result']}`;
             for (var i = 0; i < faces.length; i++) {
                 // textToWrite = faces[i].value;
-                let img = '<img src="' + response['faceids'][i] + '" class="rounded-circle" alt="">';
+                let img = '<img src="' + response['faceids'][i] + '" class="img-thumbnail" alt="">';
                 faces[i].innerHTML = img;
             }
             for (var i = 0; i < comp.length; i++) {
@@ -104,7 +104,7 @@ function submit_preds() {
             if (comp_mae_batch > response['mae_comp']) { batch_difficulty = 'The computer found the images in this batch more difficult than average' };
 
             el('result_preds').innerHTML = (
-                won_from_comp + ' (Your MAE ' + human_mae_batch + ' Computer MAE ' + comp_mae_batch + ')'
+                won_from_comp + ' (Your MAE (Mean Absolute Error) ' + human_mae_batch + ' Computer MAE ' + comp_mae_batch + ')'
                 + '<br><br>There are now ' + response['items_db'] + ' human predictions in the database'
                 + '<br><br>' + overall_winner + ' (Human MAE ' + response['mae_human'] + ' Computer MAE ' + response['mae_comp'] + ')'
                 + '<br><br>' + won_from_human

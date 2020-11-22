@@ -148,8 +148,10 @@ async def submit_preds(ages:Ages,request: Request):
     # save ages to database
     if ages.age and ages.faceids:
         for i in range(len(ages.age)):
-            db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
-            print('added',[ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
+            if abs(int(ages.age[i])-int(ages.actual[i])) < 25:
+                # only add when error is < 25
+                db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
+                print('added',[ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
 
     return {'items_db': str(db.count_predictions(conn)), 
             'mae_human' : str(round(db.human_mae(conn),1)), 
