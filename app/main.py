@@ -80,11 +80,11 @@ def img_to_reshaped_normalized_tensor(img, pad=False, crop=False):
         resize = transforms.Resize((200,200), interpolation=0)
     
         if pad: 
-                img = ImageOps.expand(img, padding)
                 w,h = img.size
                 delta_w = max((h,w)) - w
                 delta_h = max((h,w)) - h
                 padding = (delta_w//2, delta_h//2, delta_w-(delta_w//2), delta_h-(delta_h//2))
+                img = ImageOps.expand(img, padding)
         if crop: 
                 img = ImageOps.fit(img, size=(200,200), method=5, bleed=0.0, centering=(0.5, 0.5))
         img = resize(img)
