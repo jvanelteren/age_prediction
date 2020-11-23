@@ -9,7 +9,7 @@ from itertools import cycle
 from fastapi.middleware.cors import CORSMiddleware # this is absolutely essential to get rid of these *** cors errors
 from fastapi import FastAPI, File, UploadFile, HTTPException, status
 import numpy as np
-from PIL import Image
+from PIL import Image,ImageOps
 from io import BytesIO
 import time
 from datetime import datetime
@@ -19,6 +19,8 @@ import torchvision
 from torchvision import transforms
 import torch
 from torch import nn
+from functools import partial
+
 
 # you can specify allowed origins, or just allow everything with ["*"]
 origins = [
@@ -71,18 +73,28 @@ class AgeResnet(nn.Module):
         x = torch.flatten(out, 1)
         return self.fc(x)
         
-def img_to_reshaped_normalized_tensor(img):
+def img_to_reshaped_normalized_tensor(img, pad=False, crop=False):
         # makes a tensor, scales range to 0-1 and normalizes to same as imagenet
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                     std=[0.229, 0.224, 0.225])
-        resize = transforms.Resize((200,200), interpolation=2)
-        # print('1',img.shape)
+        resize = transforms.Resize((200,200), interpolation=0)
+    
+        if pad: 
+                w,h = img.size
+                delta_w = max((h,w)) - w
+                delta_h = max((h,w)) - h
+                padding = (delta_w//2, delta_h//2, delta_w-(delta_w//2), delta_h-(delta_h//2))
+                img = ImageOps.expand(img, padding)
+        if crop: 
+                img = ImageOps.fit(img, size=(200,200), method=5, bleed=0.0, centering=(0.5, 0.5))
         img = resize(img)
+
         img = transforms.functional.pil_to_tensor(img)
-        # print('2',img.shape)
         img = normalize(img.float()/255)
-        print('3',img.shape)
+        
         return img
+
+
 model = AgeResnet()
 model.load_state_dict(torch.load('app/models/model4.18',map_location=torch.device('cpu')))
 model.eval()
@@ -148,8 +160,10 @@ async def submit_preds(ages:Ages,request: Request):
     # save ages to database
     if ages.age and ages.faceids:
         for i in range(len(ages.age)):
-            db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
-            print('added',[ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
+            if abs(int(ages.age[i])-int(ages.actual[i])) < 25:
+                # only add when error is < 25
+                db.create_pred(conn, [ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
+                print('added',[ip ,ages.faceids[i],ages.age[i],ages.actual[i], abs(int(ages.age[i])-int(ages.actual[i])), ages.comp[i],abs(int(ages.comp[i])-int(ages.actual[i]))])
 
     return {'items_db': str(db.count_predictions(conn)), 
             'mae_human' : str(round(db.human_mae(conn),1)), 
@@ -162,15 +176,16 @@ async def create_file(file: bytes = File(...)):
     try:
         # transforms.functional.pil_to_tensor
         pil_image = ((Image.open(BytesIO(file))))
+        print(pil_image.size)
     except:
         return {"status": 'failed processing image'}
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Unable to process file"
         )
     # print(np.array(pil_image).shape)
-    img_t = img_to_reshaped_normalized_tensor(pil_image)
+    pred = model(img_to_reshaped_normalized_tensor(pil_image)[None])
 
-    pred = model(img_t[None])
+
     # from pathlib import Path
     # path = Path('app/uploads/')
     # pil_image.save(path/(str(time.time())+'.png'),"PNG")
