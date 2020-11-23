@@ -73,25 +73,27 @@ class AgeResnet(nn.Module):
         x = torch.flatten(out, 1)
         return self.fc(x)
         
-def img_to_reshaped_normalized_tensor(img):
+def img_to_reshaped_normalized_tensor(img, pad=False, crop=False):
         # makes a tensor, scales range to 0-1 and normalizes to same as imagenet
-        exif = img.getexif()
-        for k in exif.keys():
-                if k != 0x0112:
-                        exif[k] = None # If I don't set it to None first (or print it) the del fails for some reason. 
-                        del exif[k]
-        # Put the new exif object in the original image
-        new_exif = exif.tobytes()
-        img.info["exif"] = new_exif
-
-
-        fit = partial(ImageOps.fit, size=(200,200), method=3, bleed=0.0, centering=(0.5, 0.5))
-        
-        # return fit(img)
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                     std=[0.229, 0.224, 0.225])
+        resize = transforms.Resize((200,200), interpolation=0)
+    
+        if pad: 
+                img = ImageOps.expand(img, padding)
+                w,h = img.size
+                delta_w = max((h,w)) - w
+                delta_h = max((h,w)) - h
+                padding = (delta_w//2, delta_h//2, delta_w-(delta_w//2), delta_h-(delta_h//2))
+        if crop: 
+                img = ImageOps.fit(img, size=(200,200), method=5, bleed=0.0, centering=(0.5, 0.5))
+        img = resize(img)
 
-        return normalize(transforms.functional.pil_to_tensor(ImageOps.exif_transpose(fit(img))).float()/255)
+        img = transforms.functional.pil_to_tensor(img)
+        img = normalize(img.float()/255)
+        
+        return img
+
 
 model = AgeResnet()
 model.load_state_dict(torch.load('app/models/model4.18',map_location=torch.device('cpu')))
@@ -174,6 +176,7 @@ async def create_file(file: bytes = File(...)):
     try:
         # transforms.functional.pil_to_tensor
         pil_image = ((Image.open(BytesIO(file))))
+        print(pil_image.size)
     except:
         return {"status": 'failed processing image'}
         raise HTTPException(
