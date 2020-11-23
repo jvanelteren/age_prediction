@@ -130,12 +130,14 @@ def comp_mae(conn):
 
 #%%
 # conn = open_db('/ds/app/db/predictions.db')
+# conn = open_db('predictions.db')
 # c = count_predictions(conn)
 # del_all_records(conn)
 # c
 
 # %%
 # conn = open_db('/ds/app/db/uploads.db')
+# conn = open_db('uploads.db')
 # c = count_uploads(conn)
 # del_all_records_uploads(conn)
 # c
