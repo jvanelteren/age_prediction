@@ -1,5 +1,6 @@
 "use strict";
 
+//  variables with multiple elements
 let el = x => document.getElementById(x);
 let style = getComputedStyle(document.body);
 let faces = document.getElementsByClassName('age_human');
@@ -19,43 +20,29 @@ else {
     baseurl = '';
 }
 
-
 function submit_start() {
     reset()
     //  gets faces from server
     let xhr = new XMLHttpRequest();
     let url = baseurl + '/backend/get_images/'
 
-    console.time('Execution Time');
     xhr.onload = function (e) {
 
         if (this.readyState === 4) {
-            console.timeEnd('Execution Time');
-            // alert('binnen!!!!');
-            // alert(e.target.responseText);
             let response = JSON.parse(e.target.responseText);
-            // alert(response['faces'][0]);
-            // alert(response['faceids'][0]);
-            // el('demo').innerHTML = `Result = ${response['result']}`;
             for (var i = 0; i < faces.length; i++) {
-                // textToWrite = faces[i].value;
                 let img = '<img src="' + response['faceids'][i] + '" class="img-thumbnail" alt="">';
                 faces[i].innerHTML = img;
             }
             for (var i = 0; i < comp.length; i++) {
-                // comp[i].style.display='none'
                 comp[i].innerHTML = response['computer'][i];
             }
             for (var i = 0; i < actual.length; i++) {
-                // actual[i].style.display='none'
                 actual[i].innerHTML = response['actual'][i];
             }
             for (var i = 0; i < rows.length; i++) {
-                // actual[i].style.display='none'
                 rows[i].style.backgroundColor = style.getPropertyValue('--bg-light');
             }
-
-            // todo save ids to global variable to send back later to server
             window.value = response['faceids'];
         };
     }
@@ -63,23 +50,18 @@ function submit_start() {
         alert(`Network Error`);
         alert(e);
     };
+    // to get around cors you can:
     // vscode make sure to debug with CORS enabled in launch.json "runtimeArgs": ["--disable-web-security"]
+    // or install the cors middleware in fastapi
     xhr.open('GET', url, true);
-
-    // 2ways to select multiple elements
-    // var textBoxes = document.querySelectorAll('[id^=textbox]');
-    // var elements = document.getElementsByClassName('yourClassNameHere');
 
     var faces = document.getElementsByClassName('face');
 
-    xhr.timeout = 10000;
-
     xhr.send() // with optional [body]
-    xhr.timeout = 10000;
-
 }
 
 function submit_preds() {
+    // only allow submitting once
     if (!initial_state) { return };
 
     let xhr = new XMLHttpRequest();
@@ -115,37 +97,27 @@ function submit_preds() {
     xhr.onerror = function () { // only triggers if the request couldn't be made at all
         alert(`Network Error`);
     };
-    // vscode make sure to debug with CORS enabled in launch.json "runtimeArgs": ["--disable-web-security"]
-    xhr.open('POST', url, true);
-
-
-
 
 
     var arr = []
     // to loop you have to do it in this way
+    // check for valid input
     for (var i = 0; i < faces.length; i++) {
         if (isNaN(faces[i].value)) { alert('please enter whole numbers between 0 and 120'); return; }
         if ((faces[i].value.length) == 0) { alert('please enter numbers between 0 and 120'); return; }
         if (faces[i].value < 0) { alert('please enter age above 0'); return; }
         if (faces[i].value > 120) { alert('please enter age below 120'); return; }
         arr.push(faces[i].value)
-
     }
+    // make arrays to send to backend
     var arr_actual = []
     for (var i = 0; i < faces.length; i++) {
         arr_actual.push(actual[i].innerHTML);
-
     }
-
     var arr_comp = []
     for (var i = 0; i < faces.length; i++) {
         arr_comp.push(comp[i].innerHTML);
-
     }
-
-
-
     var total_delta_human = 0;
     var total_delta_computer = 0;
     for (var i = 0; i < faces.length; i++) {
@@ -159,36 +131,25 @@ function submit_preds() {
         var delta = (comp[i].value - actual[i].value);
         for (var j = i * 3; j < i * 3 + 3; j++) {
             if (delta_human < delta_computer) {
-                //  block of code to be executed if condition1 is true
                 rows[j].style.backgroundColor = style.getPropertyValue('--success');
             } else if (delta_human > delta_computer) {
                 rows[j].style.backgroundColor = style.getPropertyValue('--danger');
-                //  block of code to be executed if the condition1 is false and condition2 is true
             } else {
                 rows[j].style.backgroundColor = style.getPropertyValue('--info');
-                //  block of code to be executed if the condition1 is false and condition2 is false
             }
         }
-
-        // actual[i].style.backgroundColor = style.getPropertyValue('--success');
-        // comp[i].style.backgroundColor = style.getPropertyValue('--danger');
-        // faces[i].style.backgroundColor = style.getPropertyValue('--danger');
     }
 
     for (var i = 0; i < labels.length; i++) {
         labels[i].style.display = 'table-cell'; // to make visible    
     };
     var obj = { 'age': arr, 'faceids': window.value, 'actual': arr_actual, 'comp': arr_comp };
-    console.log(obj);
     initial_state = false
+    xhr.open('POST', url, true);
     xhr.send(JSON.stringify(obj)); // with optional [body]
-
-
-
 }
 
 function submit_image() {
-
     //get the input and the file
     var input = document.querySelector('input[type=file]'),
         file = input.files[0];
@@ -196,22 +157,17 @@ function submit_image() {
     let url = baseurl + '/backend/upload/'
     xhr.open("POST", url, true);
 
-
-    //if the file isn't a image nothing happens.
     //you are free to implement a fallback
     if (!file || !file.type.match(/image.*/)) alert('File not recognized as an image');
     el('img_predicted_age').innerHTML = 'Running the model, this can take a couple of seconds...'
 
     //Creates the FormData object and attach to a key name "file"
-
-
     var fd = new FormData();
     fd.append("file", file);
 
     xhr.onload = function (e) {
         //The response of de upload
         let response = JSON.parse(e.target.responseText);
-
 
         el('img_predicted_age').innerHTML = ('<br>Your estimated age is ' + response['status'] + '<br>Enjoy your wisdom and/or youthfullness!'
             + "<br>And remember: it's just a computer looking at pixels, you are as old as you feel &#128519;");
@@ -228,52 +184,43 @@ function reset() {
     }
     for (var i = 0; i < comp.length; i++) {
         comp[i].innerHTML = "";
-        comp[i].style.display = 'none' // to make visible    
+        comp[i].style.display = 'none' // to make visible
     };
     for (var i = 0; i < actual.length; i++) {
         actual[i].innerHTML = "";
-        actual[i].style.display = 'none' // to make visible    
+        actual[i].style.display = 'none' // to make visible
     };
     for (var i = 0; i < labels.length; i++) {
-        labels[i].style.display = 'none' // to make visible    
+        labels[i].style.display = 'none' // to make visible
     };
     for (var i = 0; i < rows.length; i++) { rows[i].style.backgroundColor = style.getPropertyValue('--bg-light'); };
     var imgs = document.getElementsByClassName('face');
     el('result_preds').innerHTML = ""
 
-
-
     for (var i = 0; i < imgs.length; i++) { imgs[i].innerHTML = "" };
-
     return;
 
-
-
 }
-
 
 function click_participate() {
-
-    document.getElementById('upload').style.display = 'none';
-    document.getElementById('participate').style.display = 'block';
+    el('upload').style.display = 'none';
+    el('participate').style.display = 'block';
     submit_start();
     faces[0].focus();
-
 }
 function click_upload() {
-    document.getElementById('participate').style.display = 'none';
-    document.getElementById('upload').style.display = 'block';
-    document.getElementById('upload').focus();
+    el('participate').style.display = 'none';
+    el('upload').style.display = 'block';
+    el('upload').focus();
 }
 
 function goto_blog() {
     window.open('https://jvanelteren.github.io/blog/2020/11/15/age_pure_pytorch.html', '_blank');
 }
 
-document.getElementById('click_participate').addEventListener("click", click_participate);
-document.getElementById('click_upload').addEventListener("click", click_upload);
-
-document.getElementById('submit_image').addEventListener("click", submit_image);
-document.getElementById('submit_preds').addEventListener("click", submit_preds);
-document.getElementById('reset').addEventListener("click", click_participate);
-document.getElementById('goto_blog').addEventListener("click", goto_blog);
+el('click_participate').addEventListener("click", click_participate);
+el('click_upload').addEventListener("click", click_upload);
+el('goto_blog').addEventListener("click", goto_blog);
+el('submit_image').addEventListener("click", submit_image);
+el('submit_preds').addEventListener("click", submit_preds);
+el('reset').addEventListener("click", click_participate);
