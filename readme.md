@@ -1,4 +1,4 @@
-## Kamermoties
+## Age Prediction
 Project to predict someone's age from their face. Published at [blog](https://jvanelteren.github.io/blog/2020/11/24/face2age.html)
 
 ### Usage
